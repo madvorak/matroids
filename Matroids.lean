@@ -133,34 +133,40 @@ def matroid_direct_sum {α: Type*} (M₁ M₂ : IndepMatroid α) (hME : M₁.E �
           simp [maximals] at hInimax hI₁nimax hI₂nimax
           obtain ⟨X, hXI₂, hXI₁, X₁, X₂, hMIX₂, hMIX₁, hX, hhX⟩ := hInimax I₁ I₂ rfl hI₁ hI₂
           apply hhX
+          --have := M₁.subset_ground I₁ hI₁
+          --have := M₂.subset_ground X₂ hMIX₂
           have hX₁ : I₁ ⊆ X₁ := by
-            have hIX₁ : I₁ ⊆ X := sorry
             simp only [← hX] at *
-            have := M₁.subset_ground I₁ hI₁
-            have := M₂.subset_ground X₂ hMIX₂
             have hcap₁ : I₁ ∩ X₂ = ∅ := sorry
             clear * - hcap₁ hXI₁
             intro a ha
-            specialize hXI₁ ha
-            cases hXI₁ with
+            cases hXI₁ ha with
             | inl h => exact h
             | inr h =>
               exfalso
               have : a ∈ I₁ ∩ X₂ := ⟨ha, h⟩
               rw [hcap₁] at this
               simp at this
-          have hX₂ : I₂ ⊆ X₂ := by sorry
-          have hh₁ := hI₁nimax.right X₁ hX₁ hMIX₁
-          have hh₂ := hI₂nimax.right X₂ hX₂ hMIX₂
+          have hX₂ : I₂ ⊆ X₂ := by
+            simp only [← hX] at *
+            have hcap₂ : I₂ ∩ X₁ = ∅ := sorry
+            clear * - hcap₂ hXI₂
+            intro a ha
+            cases hXI₂ ha with
+            | inl h =>
+              exfalso
+              have : a ∈ I₂ ∩ X₁ := ⟨ha, h⟩
+              simp [hcap₂] at this
+            | inr h => exact h
           rw [← hX]
           intro a ha
           cases ha with
           | inl h =>
             left
-            exact hh₁ h
+            exact hI₁nimax.right X₁ hX₁ hMIX₁ h
           | inr h =>
             right
-            exact hh₂ h
+            exact hI₂nimax.right X₂ hX₂ hMIX₂ h
     )
     (by
       intro X hX I ⟨I₁, I₂, hI₁₂, hI₁, hI₂⟩ hIX
