@@ -5,15 +5,15 @@ This repository contains formalizations of certain classes of matroids and their
 
 ## Features and Roadmap
 
-[ ] Operations on matroids
-    [ ] Intersection
-    [ ] Direct sum
-    [ ] Mapping
-    [ ] Union
-[ ] Representable matroids
-[ ] Regular matroids
-[ ] ...
-[ ] Symour's decomposition theorem
+- [ ] Operations on matroids
+    - [ ] Intersection
+    - [ ] Direct sum
+    - [ ] Mapping
+    - [ ] Union
+- [ ] Representable matroids
+- [ ] Regular matroids
+- [ ] ...
+- [ ] Symour's decomposition theorem
 
 
 ## References
