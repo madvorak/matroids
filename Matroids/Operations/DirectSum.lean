@@ -35,9 +35,7 @@ def matroid_direct_sum {α: Type*} (M₁ M₂ : IndepMatroid α) (hME : M₁.E �
             apply M₁.subset_ground at hI₁
             clear * - hI₁ hMIX₁ hMIX₂ hME
             setauto
-            intro x
-            specialize hME x
-            tauto
+            aesop
           )
           clear * - hcap₁ hXI₁
           intro a ha
@@ -56,9 +54,7 @@ def matroid_direct_sum {α: Type*} (M₁ M₂ : IndepMatroid α) (hME : M₁.E �
             apply M₂.subset_ground at hI₂
             clear * - hI₂ hMIX₁ hMIX₂ hME
             setauto
-            intro x
-            specialize hME x
-            tauto
+            aesop
           )
           clear * - hcap₂ hXI₂
           intro a ha
