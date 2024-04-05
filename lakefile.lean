@@ -10,5 +10,6 @@ require mathlib from git
 
 @[default_target]
 lean_lib Matroids {
+  globs := #[.submodules `Matroids]
   moreLeanArgs := #["-DautoImplicit=false"]
 }
