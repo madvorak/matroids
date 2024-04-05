@@ -1,6 +1,7 @@
 import Mathlib.Data.Matroid.IndepAxioms
 import Mathlib.Data.Matrix.RowCol
 import Mathlib.LinearAlgebra.LinearIndependent
+import Mathlib.Tactic.Have
 
 
 def matroid_intersection {α : Type*} {M₁ M₂ : IndepMatroid α} (hME : M₁.E = M₂.E) :=
