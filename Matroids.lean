@@ -78,36 +78,36 @@ def matroid_union {α : Type*} (M₁ M₂ : IndepMatroid α) (hME : M₁.E = M�
         cases hxj with
         | inl hJ₁ => exact Or.inl ⟨hJ₁, hx⟩
         | inr hJ₂ => exact Or.inr ⟨hJ₂, hx⟩
-      )
-      (by
-        intro I B ⟨I₁, I₂, hI, hI₁, hI₂⟩ hIni hBin
-        rw [← hI] at hIni ⊢
-        simp only at hIni hBin
-        have hM₁ := M₁.indep_aug
-        have hM₂ := M₂.indep_aug
+    )
+    (by
+      intro I B ⟨I₁, I₂, hI, hI₁, hI₂⟩ hIni hBin
+      rw [← hI] at hIni ⊢
+      simp only at hIni hBin
+      have hM₁ := M₁.indep_aug
+      have hM₂ := M₂.indep_aug
+      sorry
+    )
+    (by
+      intro X hX
+      simp [Matroid.ExistsMaximalSubsetProperty]
+      intro A I₁ I₂ hA hI₁ hI₂ hAX
+      obtain ⟨A₁, hM₁⟩ := M₁.indep_maximal X hX A sorry sorry
+      obtain ⟨A₂, hM₂⟩ := M₂.indep_maximal X (hME ▸ hX) A sorry sorry
+      use A₁ ∪ A₂
+      constructor
+      · sorry
+      · intro B hB hAAB
+        rw [Set.mem_setOf_eq] at hB
+        obtain ⟨⟨C₁, C₂, hCB, hC₁, hC₂⟩, hAB, hBX⟩ := hB
+        rw [←hCB] at *
+        clear hCB
         sorry
-      )
-      (by
-        intro X hX
-        simp [Matroid.ExistsMaximalSubsetProperty]
-        intro A I₁ I₂ hA hI₁ hI₂ hAX
-        obtain ⟨A₁, hM₁⟩ := M₁.indep_maximal X hX A sorry sorry
-        obtain ⟨A₂, hM₂⟩ := M₂.indep_maximal X (hME ▸ hX) A sorry sorry
-        use A₁ ∪ A₂
-        constructor
-        · sorry
-        · intro B hB hAAB
-          rw [Set.mem_setOf_eq] at hB
-          obtain ⟨⟨C₁, C₂, hCB, hC₁, hC₂⟩, hAB, hBX⟩ := hB
-          rw [←hCB] at *
-          clear hCB
-          sorry
-      )
-      (by
-        intro I hI
-        obtain ⟨_, _, rfl, hM₁, hM₂⟩ := hI
-        exact Set.union_subset (M₁.subset_ground _ hM₁) (hME ▸ M₂.subset_ground _ hM₂)
-      )
+    )
+    (by
+      intro I hI
+      obtain ⟨_, _, rfl, hM₁, hM₂⟩ := hI
+      exact Set.union_subset (M₁.subset_ground _ hM₁) (hME ▸ M₂.subset_ground _ hM₂)
+    )
 
 def matroid_direct_sum {α: Type*} (M₁ M₂ : IndepMatroid α) (hME : M₁.E ∩ M₂.E = ∅) :=
   IndepMatroid.mk
@@ -126,48 +126,50 @@ def matroid_direct_sum {α: Type*} (M₁ M₂ : IndepMatroid α) (hME : M₁.E �
       clear hI I
       if hI₁nimax: I₁ ∉ maximals Set.Subset M₁.Indep then
         sorry
+      else if hI₂nimax: I₂ ∉ maximals Set.Subset M₂.Indep then
+        sorry
       else
-        if hI₂nimax: I₂ ∉ maximals Set.Subset M₂.Indep then
-          sorry
-        else
-          exfalso
-          simp [maximals] at hInimax hI₁nimax hI₂nimax
-          obtain ⟨X, hXI₂, hXI₁, X₁, X₂, hMIX₂, hMIX₁, hX, hhX⟩ := hInimax I₁ I₂ rfl hI₁ hI₂
-          apply hhX
-          --have := M₁.subset_ground I₁ hI₁
-          --have := M₂.subset_ground X₂ hMIX₂
-          have hX₁ : I₁ ⊆ X₁ := by
-            simp only [← hX] at *
-            have hcap₁ : I₁ ∩ X₂ = ∅ := sorry
-            clear * - hcap₁ hXI₁
-            intro a ha
-            cases hXI₁ ha with
-            | inl h => exact h
-            | inr h =>
-              exfalso
-              have : a ∈ I₁ ∩ X₂ := ⟨ha, h⟩
-              rw [hcap₁] at this
-              simp at this
-          have hX₂ : I₂ ⊆ X₂ := by
-            simp only [← hX] at *
-            have hcap₂ : I₂ ∩ X₁ = ∅ := sorry
-            clear * - hcap₂ hXI₂
-            intro a ha
-            cases hXI₂ ha with
-            | inl h =>
-              exfalso
-              have : a ∈ I₂ ∩ X₁ := ⟨ha, h⟩
-              simp [hcap₂] at this
-            | inr h => exact h
-          rw [← hX]
+        exfalso
+        simp [maximals] at hInimax hI₁nimax hI₂nimax
+        obtain ⟨X, hXI₂, hXI₁, X₁, X₂, hMIX₂, hMIX₁, hX, hhX⟩ := hInimax I₁ I₂ rfl hI₁ hI₂
+        -- plan:
+        -- 1. show: since I is not maximal, I_1 or I_2 is not maximal
+        -- 2. show: since B is maximal, B_1 and B_2 are maximal
+        apply hhX
+        --have := M₁.subset_ground I₁ hI₁
+        --have := M₂.subset_ground X₂ hMIX₂
+        have hX₁ : I₁ ⊆ X₁ := by
+          simp only [← hX] at *
+          have hcap₁ : I₁ ∩ X₂ = ∅ := sorry
+          clear * - hcap₁ hXI₁
           intro a ha
-          cases ha with
-          | inl h =>
-            left
-            exact hI₁nimax.right X₁ hX₁ hMIX₁ h
+          cases hXI₁ ha with
+          | inl h => exact h
           | inr h =>
-            right
-            exact hI₂nimax.right X₂ hX₂ hMIX₂ h
+            exfalso
+            have : a ∈ I₁ ∩ X₂ := ⟨ha, h⟩
+            rw [hcap₁] at this
+            simp at this
+        have hX₂ : I₂ ⊆ X₂ := by
+          simp only [← hX] at *
+          have hcap₂ : I₂ ∩ X₁ = ∅ := sorry
+          clear * - hcap₂ hXI₂
+          intro a ha
+          cases hXI₂ ha with
+          | inl h =>
+            exfalso
+            have : a ∈ I₂ ∩ X₁ := ⟨ha, h⟩
+            simp [hcap₂] at this
+          | inr h => exact h
+        rw [← hX]
+        intro a ha
+        cases ha with
+        | inl h =>
+          left
+          exact hI₁nimax.right X₁ hX₁ hMIX₁ h
+        | inr h =>
+          right
+          exact hI₂nimax.right X₂ hX₂ hMIX₂ h
     )
     (by
       intro X hX I ⟨I₁, I₂, hI₁₂, hI₁, hI₂⟩ hIX
@@ -213,7 +215,7 @@ def Matrix.indepMatroid {F m n : Type*} [Field F] [Fintype m] [Fintype n]
       have indep' : LinearIndependent F (fun x => x : J.image A.transpose → (m → F))
       · sorry
       suffices : LinearIndependent F (fun x => x : I.image A.transpose → (m → F))
-      · sorry
+      · sorry -- Wrong! Does not suffice!
       exact LinearIndependent.mono (Set.image_mono subse) indep'
     )
     sorry
