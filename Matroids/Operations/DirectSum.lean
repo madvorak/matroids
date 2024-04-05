@@ -1,12 +1,5 @@
 import Mathlib.Data.Matroid.IndepAxioms
 import Mathlib.Tactic.Have
-
-
-import Mathlib.Data.Matroid.IndepAxioms
-import Mathlib.Data.Matrix.RowCol
-import Mathlib.LinearAlgebra.LinearIndependent
-import Mathlib.Tactic.Have
-
 import Matroids.Automation.Tactics
 
 
@@ -27,53 +20,50 @@ def matroid_direct_sum {α: Type*} (M₁ M₂ : IndepMatroid α) (hME : M₁.E �
       clear hI I
       if hI₁nimax: I₁ ∉ maximals Set.Subset M₁.Indep then
         sorry
+      else if hI₂nimax: I₂ ∉ maximals Set.Subset M₂.Indep then
+        sorry
       else
-        if hI₂nimax: I₂ ∉ maximals Set.Subset M₂.Indep then
-          sorry
-        else
-          exfalso
-          simp [maximals] at hInimax hI₁nimax hI₂nimax
-          obtain ⟨X, hXI₂, hXI₁, X₁, X₂, hMIX₂, hMIX₁, hX, hhX⟩ := hInimax I₁ I₂ rfl hI₁ hI₂
-          apply hhX
-          have hX₁ : I₁ ⊆ X₁ := by
-            simp only [← hX] at *
-            have hcap₁ : I₁ ∩ X₂ = ∅ := (by
-              apply M₁.subset_ground at hMIX₁
-              apply M₂.subset_ground at hMIX₂
-              apply M₁.subset_ground at hI₁
-              clear * - hI₁ hMIX₁ hMIX₂ hME
-              setauto
-            )
-            clear * - hcap₁ hXI₁
-            intro a ha
-            cases hXI₁ ha with
-            | inl h => exact h
-            | inr h =>
-              exfalso
-              have : a ∈ I₁ ∩ X₂ := ⟨ha, h⟩
-              rw [hcap₁] at this
-              simp at this
-          have hX₂ : I₂ ⊆ X₂ := by
-            simp only [← hX] at *
-            have hcap₂ : I₂ ∩ X₁ = ∅ := (by
-              apply M₁.subset_ground at hMIX₁
-              apply M₂.subset_ground at hMIX₂
-              apply M₂.subset_ground at hI₂
-              clear * - hI₂ hMIX₁ hMIX₂ hME
-              setauto
-            )
-            clear * - hcap₂ hXI₂
-            intro a ha
-            cases hXI₂ ha with
-            | inl h =>
-              exfalso
-              have : a ∈ I₂ ∩ X₁ := ⟨ha, h⟩
-              simp [hcap₂] at this
-            | inr h => exact h
-          rw [← hX]sorry hMIX₁ h
+        exfalso
+        simp [maximals] at hInimax hI₁nimax hI₂nimax
+        obtain ⟨X, hXI₂, hXI₁, X₁, X₂, hMIX₂, hMIX₁, hX, hhX⟩ := hInimax I₁ I₂ rfl hI₁ hI₂
+        apply hhX
+        have hX₁ : I₁ ⊆ X₁ := by
+          simp only [← hX] at *
+          have hcap₁ : I₁ ∩ X₂ = ∅ := (by
+            apply M₁.subset_ground at hMIX₁
+            apply M₂.subset_ground at hMIX₂
+            apply M₁.subset_ground at hI₁
+            clear * - hI₁ hMIX₁ hMIX₂ hME
+            sorry
+          )
+          clear * - hcap₁ hXI₁
+          intro a ha
+          cases hXI₁ ha with
+          | inl h => exact h
           | inr h =>
-            right
-            exact hI₂nimax.right X₂ hX₂ hMIX₂ h
+            exfalso
+            have : a ∈ I₁ ∩ X₂ := ⟨ha, h⟩
+            rw [hcap₁] at this
+            simp at this
+        have hX₂ : I₂ ⊆ X₂ := by
+          simp only [← hX] at *
+          have hcap₂ : I₂ ∩ X₁ = ∅ := (by
+            apply M₁.subset_ground at hMIX₁
+            apply M₂.subset_ground at hMIX₂
+            apply M₂.subset_ground at hI₂
+            clear * - hI₂ hMIX₁ hMIX₂ hME
+            sorry
+          )
+          clear * - hcap₂ hXI₂
+          intro a ha
+          cases hXI₂ ha with
+          | inl h =>
+            exfalso
+            have : a ∈ I₂ ∩ X₁ := ⟨ha, h⟩
+            simp [hcap₂] at this
+          | inr h => exact h
+        rw [← hX]
+        sorry
     )
     (by
       intro X hX I ⟨I₁, I₂, hI₁₂, hI₁, hI₂⟩ hIX
