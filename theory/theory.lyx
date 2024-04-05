@@ -1,0 +1,822 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\begin_modules
+theorems-ams-bytype
+theorems-ams-extended-bytype
+theorems-sec-bytype
+todonotes
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\topmargin 2cm
+\rightmargin 2cm
+\bottommargin 2cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Theory on Matroids
+\end_layout
+
+\begin_layout Standard
+This document contains definitions and properties that are implemented in
+ the project.
+ The focus is on clarity of statements and lean-friendliness of the proofs.
+\end_layout
+
+\begin_layout Section
+References
+\end_layout
+
+\begin_layout Itemize
+James Oxley, Matroid Theory, Second edition, Oxford University Press, New
+ York, 2011.
+\end_layout
+
+\begin_layout Itemize
+Henning Bruhn, Reinhard Diestel, Matthias Kriesell, Rudi Pendavingh, Paul
+ Wollan, Axioms for infinite matroids, Advances in Mathematics, Volume 239,
+ 2013, Pages 18–46.
+ 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://doi.org/10.1016/j.aim.2013.01.011
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+Todo: create bibliography, move to the end of document
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Matroid
+\end_layout
+
+\begin_layout Notation*
+Given 
+\begin_inset Formula $\mathcal{E}\subseteq2^{E}$
+\end_inset
+
+, we write 
+\begin_inset Formula $\mathcal{E}^{\max}$
+\end_inset
+
+ for the set of maximal elements of 
+\begin_inset Formula $\mathcal{E}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Definition via Independence Axioms
+\end_layout
+
+\begin_layout Definition
+A matroid 
+\begin_inset Formula $\mathcal{M}=\left(E,\mathcal{I}\right)$
+\end_inset
+
+ is a pair of a ground set 
+\begin_inset Formula $E$
+\end_inset
+
+ (finite or infinite) and a set 
+\begin_inset Formula $\mathcal{I}\subseteq2^{E}$
+\end_inset
+
+ satisfying the following independence axioms:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Formula $\emptyset\in\mathcal{I}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+If 
+\begin_inset Formula $A\subseteq B$
+\end_inset
+
+ and 
+\begin_inset Formula $B\in\mathcal{I}$
+\end_inset
+
+, then 
+\begin_inset Formula $A\in\mathcal{I}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+For all 
+\begin_inset Formula $I\in\mathcal{I}\setminus\mathcal{I}^{\max}$
+\end_inset
+
+ and 
+\begin_inset Formula $I'\in\mathcal{I}^{\max}$
+\end_inset
+
+, there is an 
+\begin_inset Formula $x\in I'\setminus I$
+\end_inset
+
+ such that 
+\begin_inset Formula $I+x\in\mathcal{I}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Whenever 
+\begin_inset Formula $I\subseteq X\subseteq E$
+\end_inset
+
+ and 
+\begin_inset Formula $I\in\mathcal{I}$
+\end_inset
+
+, the set 
+\begin_inset Formula $\left\{ I'\in\mathcal{I}\mid I\subseteq I'\subseteq X\right\} $
+\end_inset
+
+ has a maximal element.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+Todo: more axioms, proof of equivalence following [2]?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Functions on Matroids
+\end_layout
+
+\begin_layout Subsection
+Closure
+\end_layout
+
+\begin_layout Definition
+The closure operator is the function 
+\begin_inset Formula $2^{E}\to2^{E}$
+\end_inset
+
+ mapping a set 
+\begin_inset Formula $X\subseteq E$
+\end_inset
+
+ to the set
+\begin_inset Formula 
+\[
+\mathrm{cl}\left(X\right)=X\cup\left\{ x\mid\exists I\subseteq X\colon I\in\mathcal{I}\text{ but }I+x\notin\mathcal{I}\right\} .
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+Todo: state and prove properties
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Relative Rank
+\end_layout
+
+\begin_layout Definition
+The relative rank function is the function 
+\begin_inset Formula $r\colon\left(2^{E}\times2^{E}\right)_{\subseteq}\to\mathbb{N}\cup\left\{ \infty\right\} $
+\end_inset
+
+ that maps a pair 
+\begin_inset Formula $A\supseteq B$
+\end_inset
+
+ of subsets of 
+\begin_inset Formula $E$
+\end_inset
+
+ to
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula 
+\[
+r\left(A\mid B\right)=\max\left\{ \left|I\setminus J\right|\mid I\supseteq J,\ I\in\mathcal{I}\cap2^{A},\ J\text{ maximal in }\mathcal{I}\cap2^{B}\right\} .
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+Todo: state and prove properties
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Lemma
+This maximum is attained and is independent of the choice of 
+\begin_inset Formula $J$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Operations on Matroids
+\end_layout
+
+\begin_layout Subsection
+Direct Sum
+\end_layout
+
+\begin_layout Definition
+Let 
+\begin_inset Formula $\mathcal{M}_{1}=\left(E_{1},\mathcal{I}_{1}\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{M}_{2}=\left(E_{2},\mathcal{I}_{2}\right)$
+\end_inset
+
+ be matroids on disjoint sets 
+\begin_inset Formula $E_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $E_{2}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $E=E_{1}\cup E_{2}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{I}=\left\{ I_{1}\cup I_{2}\mid I_{1}\in\mathcal{I}_{1},\ I_{2}\in\mathcal{I_{2}}\right\} $
+\end_inset
+
+.
+ The matroid 
+\begin_inset Formula $\mathcal{M}=\left(E,\mathcal{I}\right)$
+\end_inset
+
+ is the direct sum of 
+\begin_inset Formula $\mathcal{M}_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{M}_{2}$
+\end_inset
+
+ and is denoted 
+\begin_inset Formula $\mathcal{M}_{1}\oplus\mathcal{M}_{2}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset Formula $\mathcal{M}_{1}\oplus\mathcal{M}_{2}$
+\end_inset
+
+ is indeed a matroid, i.e., 
+\begin_inset Formula $\mathcal{I}$
+\end_inset
+
+ satisfies the independence axioms.
+\end_layout
+
+\begin_layout Proof
+\begin_inset space ~
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Since 
+\begin_inset Formula $\emptyset\in\mathcal{I}_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\emptyset\in\mathcal{I}_{2}$
+\end_inset
+
+, we have 
+\begin_inset Formula $\emptyset\cup\emptyset=\emptyset\in\mathcal{I}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Let 
+\begin_inset Formula $A\subseteq B$
+\end_inset
+
+ and 
+\begin_inset Formula $B\in\mathcal{I}$
+\end_inset
+
+.
+ Since 
+\begin_inset Formula $B\in\mathcal{I}$
+\end_inset
+
+, by definition of 
+\begin_inset Formula $\mathcal{I}$
+\end_inset
+
+ it can be represented as 
+\begin_inset Formula $B=B_{1}\cup B_{2}$
+\end_inset
+
+ with 
+\begin_inset Formula $B_{1}\in\mathcal{I}_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $B_{2}\in\mathcal{I}_{2}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $A_{1}=A\cap B_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $A_{2}=A\cap B_{2}$
+\end_inset
+
+.
+ Since 
+\begin_inset Formula $A_{1}\subseteq B_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $B_{1}\in\mathcal{I}_{1}$
+\end_inset
+
+, by independence axiom 2 in 
+\begin_inset Formula $\mathcal{M}_{1}$
+\end_inset
+
+ we have 
+\begin_inset Formula $A_{1}\in\mathcal{I}_{1}$
+\end_inset
+
+.
+ By repeating this for 
+\begin_inset Formula $\mathcal{M}_{2}$
+\end_inset
+
+, we get 
+\begin_inset Formula $A_{2}\in\mathcal{I}_{2}$
+\end_inset
+
+.
+ Thus, 
+\begin_inset Formula $A=A_{1}\cup A_{2}$
+\end_inset
+
+ where 
+\begin_inset Formula $A_{1}\in\mathcal{I}_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $A_{2}\in\mathcal{I}_{2}$
+\end_inset
+
+, so 
+\begin_inset Formula $A\in\mathcal{I}$
+\end_inset
+
+by definition of 
+\begin_inset Formula $\mathcal{I}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+We split the proof into two parts.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+First, let us show that if 
+\begin_inset Formula $I\in\mathcal{I}^{\max}$
+\end_inset
+
+, then 
+\begin_inset Formula $I\cap E_{1}\in\mathcal{I}_{1}^{\max}$
+\end_inset
+
+ and 
+\begin_inset Formula $I\cap E_{2}\in\mathcal{I}_{2}^{\max}$
+\end_inset
+
+.
+ To this end, suppose that 
+\begin_inset Formula $I\cap E_{1}\notin\mathcal{I}_{1}^{\max}$
+\end_inset
+
+, i.e., there is 
+\begin_inset Formula $x\in E_{1}\setminus I$
+\end_inset
+
+ such that 
+\begin_inset Formula $\left(I\cap E_{1}\right)+x\in\mathcal{I}_{1}$
+\end_inset
+
+.
+ But then 
+\begin_inset Formula $\left(I\cap E_{1}\right)+\left(I\cap E_{2}\right)+x\in\mathcal{I}$
+\end_inset
+
+ by definition of 
+\begin_inset Formula $\mathcal{I}$
+\end_inset
+
+, which contradicts maximality of 
+\begin_inset Formula $I$
+\end_inset
+
+.
+ The proof for 
+\begin_inset Formula $I\cap E_{2}$
+\end_inset
+
+ is identical up to swapping the roles of 
+\begin_inset Formula $\mathcal{M}_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{M}_{2}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Now, let 
+\begin_inset Formula $I\in\mathcal{I}\setminus\mathcal{I}^{\max}$
+\end_inset
+
+ and 
+\begin_inset Formula $I'\in\mathcal{I}^{\max}$
+\end_inset
+
+.
+ Let us introduce the following notation: 
+\begin_inset Formula $I_{1}=I\cap E_{1}$
+\end_inset
+
+, 
+\begin_inset Formula $I_{2}=I\cap E_{2}$
+\end_inset
+
+, 
+\begin_inset Formula $I_{1}'=I'\cap E_{1}$
+\end_inset
+
+, 
+\begin_inset Formula $I_{2}'=I'\cap E_{2}$
+\end_inset
+
+.
+ From the first part of the proof we know that 
+\begin_inset Formula $I_{1}'\in\mathcal{I}_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $I_{2}'\in\mathcal{I}_{2}$
+\end_inset
+
+.
+ Additionally, as 
+\begin_inset Formula $I\notin\mathcal{I}^{\max}$
+\end_inset
+
+, the first part also implies that at least one of the following holds:
+ 
+\begin_inset Formula $I_{1}\notin\mathcal{I}_{1}^{\max}$
+\end_inset
+
+ or 
+\begin_inset Formula $I_{2}\notin\mathcal{I}_{2}^{\max}$
+\end_inset
+
+.
+ 
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+Todo: show: there is an 
+\begin_inset Formula $x\in I'\setminus I$
+\end_inset
+
+ such that 
+\begin_inset Formula $I+x\in\mathcal{I}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Let 
+\begin_inset Formula $I\subseteq X\subseteq E$
+\end_inset
+
+ and 
+\begin_inset Formula $I\in\mathcal{I}$
+\end_inset
+
+.
+ For the sake of deriving a contradiction suppose that the set 
+\begin_inset Formula $T=\left\{ I'\in\mathcal{I}\mid I\subseteq I'\subseteq X\right\} $
+\end_inset
+
+ has no maximal element.
+ 
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+Todo: derive contradiction
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Mapping
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+Todo: definition, proof that result is a matroid
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Union
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+Todo: definition, proof that result is a matroid
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Representable Matroids
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+Todo: definition, proof that result is a matroid
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Regular Matroids
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+Todo: definition, proof that result is a matroid
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Largest Common Independent Set
+\end_layout
+
+\begin_layout Lemma
+Let 
+\begin_inset Formula $\mathcal{M}_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{M}_{2}$
+\end_inset
+
+ be finite matroids with rank functions 
+\begin_inset Formula $r_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $r_{2}$
+\end_inset
+
+and a common ground set 
+\begin_inset Formula $E$
+\end_inset
+
+.
+ Then
+\begin_inset Formula 
+\[
+\max\left\{ \left|I\right|\mid I\in\mathcal{I}_{1}\cap\mathcal{I}_{2}\right\} =\min\left\{ r_{1}\left(T\right)+r_{2}\left(E-T\right)\mid T\subseteq E\right\} .
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+Todo: proof? generalize?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Seymour's Decomposition Theorem
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+Todo: statement, proof
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
