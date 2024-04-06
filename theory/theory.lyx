@@ -36,7 +36,16 @@ todonotes
 \index_command default
 \paperfontsize default
 \spacing single
-\use_hyperref false
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
 \papersize default
 \use_geometry true
 \use_package amsmath 1
@@ -162,7 +171,11 @@ Definition via Independence Axioms
 \end_layout
 
 \begin_layout Definition
-A matroid 
+A 
+\emph on
+matroid
+\emph default
+ 
 \begin_inset Formula $\mathcal{M}=\left(E,\mathcal{I}\right)$
 \end_inset
 
@@ -260,7 +273,11 @@ Closure
 \end_layout
 
 \begin_layout Definition
-The closure operator is the function 
+The 
+\emph on
+closure operator
+\emph default
+ is the function 
 \begin_inset Formula $2^{E}\to2^{E}$
 \end_inset
 
@@ -271,7 +288,7 @@ The closure operator is the function
  to the set
 \begin_inset Formula 
 \[
-\mathrm{cl}\left(X\right)=X\cup\left\{ x\mid\exists I\subseteq X\colon I\in\mathcal{I}\text{ but }I+x\notin\mathcal{I}\right\} .
+\mathrm{cl}\left(X\right)=X\cup\left\{ x\in E\mid\exists I\subseteq X\text{ s.t. \colon}I\in\mathcal{I}\text{ but }I+x\notin\mathcal{I}\right\} .
 \]
 
 \end_inset
@@ -297,7 +314,11 @@ Relative Rank
 \end_layout
 
 \begin_layout Definition
-The relative rank function is the function 
+The 
+\emph on
+relative rank function
+\emph default
+ is the function 
 \begin_inset Formula $r\colon\left(2^{E}\times2^{E}\right)_{\subseteq}\to\mathbb{N}\cup\left\{ \infty\right\} $
 \end_inset
 
@@ -375,15 +396,15 @@ Let
 \end_inset
 
  and 
-\begin_inset Formula $\mathcal{I}=\left\{ I_{1}\cup I_{2}\mid I_{1}\in\mathcal{I}_{1},\ I_{2}\in\mathcal{I_{2}}\right\} $
+\begin_inset Formula $\mathcal{I}=\left\{ I_{1}\cup I_{2}\mid I_{1}\in\mathcal{I}_{1},\ I_{2}\in\mathcal{I}_{2}\right\} $
 \end_inset
 
 .
- The matroid 
-\begin_inset Formula $\mathcal{M}=\left(E,\mathcal{I}\right)$
-\end_inset
-
- is the direct sum of 
+ The 
+\emph on
+direct sum
+\emph default
+ of 
 \begin_inset Formula $\mathcal{M}_{1}$
 \end_inset
 
@@ -391,8 +412,8 @@ Let
 \begin_inset Formula $\mathcal{M}_{2}$
 \end_inset
 
- and is denoted 
-\begin_inset Formula $\mathcal{M}_{1}\oplus\mathcal{M}_{2}$
+ is the matroid 
+\begin_inset Formula $\mathcal{M}_{1}\oplus\mathcal{M}_{2}=\left(E,\mathcal{I}\right)$
 \end_inset
 
 .
@@ -410,10 +431,335 @@ Let
 \end_layout
 
 \begin_layout Proof
-\begin_inset space ~
+First, we list several propositions that will be useful when checking the
+ axioms.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset CommandInset label
+LatexCommand label
+name "enu:dir-sum-split-subset"
+
+\end_inset
+
+If 
+\begin_inset Formula $A,B\in E_{1}\cup E_{2}$
+\end_inset
+
+ where 
+\begin_inset Formula $E_{1}\cap E_{2}=\emptyset$
+\end_inset
+
+, then 
+\begin_inset Formula $A\subseteq B$
+\end_inset
+
+ if and only if 
+\begin_inset Formula $A\cap E_{1}\subseteq B\cap E_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $A\cap E_{2}\subseteq B\cap E_{2}$
+\end_inset
+
+.
+ Moreover, if 
+\begin_inset Formula $A\subsetneq B$
+\end_inset
+
+, then 
+\begin_inset Formula $A\cap E_{1}\subsetneq B\cap E_{1}$
+\end_inset
+
+ or 
+\begin_inset Formula $A\cap E_{2}\subsetneq B\cap E_{2}$
+\end_inset
+
+.
+ This holds by set theory.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset CommandInset label
+LatexCommand label
+name "enu:dir-sum-split-indep"
+
 \end_inset
 
 
+\begin_inset Formula $I\in\mathcal{I}$
+\end_inset
+
+ if and only if 
+\begin_inset Formula $I\cap E_{1}\in\mathcal{I}_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $I\cap E_{2}\in\mathcal{I}_{2}$
+\end_inset
+
+.
+ Indeed, this follows from the definition of 
+\begin_inset Formula $\mathcal{I}$
+\end_inset
+
+ and the fact that 
+\begin_inset Formula $E_{1}\cap E_{2}=\emptyset$
+\end_inset
+
+.
+\begin_inset Flex TODO Note (Margin)
+status open
+
+\begin_layout Plain Layout
+need more details?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset CommandInset label
+LatexCommand label
+name "enu:dir-sum-split-max"
+
+\end_inset
+
+
+\begin_inset Formula $I\in\mathcal{I}^{\max}$
+\end_inset
+
+ if and only if 
+\begin_inset Formula $I\cap E_{1}\in\mathcal{I}_{1}^{\max}$
+\end_inset
+
+ and 
+\begin_inset Formula $I\cap E_{2}\in\mathcal{I}_{2}^{\max}$
+\end_inset
+
+.
+ To prove the forward direction, first note that 
+\begin_inset Formula $I\cap E_{1}\in\mathcal{I}_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $I\cap E_{2}\in\mathcal{I}_{2}$
+\end_inset
+
+ by proposition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:dir-sum-split-indep"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ For the sake of deriving a contradiction, suppose that 
+\begin_inset Formula $I\cap E_{1}\notin\mathcal{I}_{1}^{\max}$
+\end_inset
+
+, i.e., there is 
+\begin_inset Formula $x\in E_{1}\setminus I$
+\end_inset
+
+ such that 
+\begin_inset Formula $\left(I\cap E_{1}\right)+x\in\mathcal{I}_{1}$
+\end_inset
+
+.
+ But then 
+\begin_inset Formula $\left(I\cap E_{1}\right)+x+\left(I\cap E_{2}\right)\in\mathcal{I}$
+\end_inset
+
+ by definition of 
+\begin_inset Formula $\mathcal{I}$
+\end_inset
+
+, which contradicts maximality of 
+\begin_inset Formula $I$
+\end_inset
+
+.
+ Thus, 
+\begin_inset Formula $I\cap E_{1}\in\mathcal{I}_{1}^{\max}$
+\end_inset
+
+, as desired.
+ We can show 
+\begin_inset Formula $I\cap E_{2}\in\mathcal{I}_{2}^{\max}$
+\end_inset
+
+ similarly by swapping the roles of 
+\begin_inset Formula $\mathcal{M}_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{M}_{2}$
+\end_inset
+
+.
+ To show the converse by contraposition, suppose we have 
+\begin_inset Formula $I\notin\mathcal{I}^{\max}$
+\end_inset
+
+.
+ Then there exists 
+\begin_inset Formula $I'\in\mathcal{I}$
+\end_inset
+
+ such that 
+\begin_inset Formula $I\subsetneq I'$
+\end_inset
+
+.
+ By proposition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:dir-sum-split-subset"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, we have 
+\begin_inset Formula $I\cap E_{1}\subsetneq I'\cap E_{1}$
+\end_inset
+
+ or 
+\begin_inset Formula $I\cap E_{2}\subsetneq I'\cap E_{2}$
+\end_inset
+
+.
+ Since 
+\begin_inset Formula $I\cap E_{1},I'\cap E_{1}\in\mathcal{I}_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $I\cap E_{2},I'\cap E_{2}\in\mathcal{I}_{2}$
+\end_inset
+
+ by proposition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:dir-sum-split-indep"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, this means that 
+\begin_inset Formula $I\cap E_{1}\notin\mathcal{I}_{1}^{\max}$
+\end_inset
+
+ or 
+\begin_inset Formula $I\cap E_{2}\notin\mathcal{I}_{2}^{\max}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset CommandInset label
+LatexCommand label
+name "enu:dir-sum-split-chain"
+
+\end_inset
+
+Let 
+\begin_inset Formula $T=\left\{ I'\in\mathcal{I}\mid I\subseteq I'\subseteq X\right\} $
+\end_inset
+
+, 
+\begin_inset Formula $T_{1}=\left\{ I''\in\mathcal{I}\mid I_{1}\subseteq I''\subseteq X_{1}\right\} $
+\end_inset
+
+, 
+\begin_inset Formula $T_{2}=\left\{ I''\in\mathcal{I}\mid I_{1}\subseteq I''\subseteq X_{1}\right\} $
+\end_inset
+
+.
+ If 
+\begin_inset Formula $I'\in T$
+\end_inset
+
+, then 
+\begin_inset Formula $I'=I_{1}'\cup I_{2}'$
+\end_inset
+
+ where 
+\begin_inset Formula $I_{1}'\in T_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $I_{2}'\in T_{2}$
+\end_inset
+
+.
+ Indeed, by definition of 
+\begin_inset Formula $\mathcal{I}$
+\end_inset
+
+ we have 
+\begin_inset Formula $I'=I_{1}'\cup I_{2}'$
+\end_inset
+
+ where 
+\begin_inset Formula $I_{1}'\in\mathcal{I}_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $I_{2}'\in\mathcal{I}_{2}$
+\end_inset
+
+.
+ By applying proposition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:dir-sum-split-subset"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ to 
+\begin_inset Formula $I$
+\end_inset
+
+ and 
+\begin_inset Formula $I'$
+\end_inset
+
+ and to 
+\begin_inset Formula $I'$
+\end_inset
+
+ and 
+\begin_inset Formula $X$
+\end_inset
+
+, we obtain 
+\begin_inset Formula $I_{1}\subseteq I_{1}'\subseteq X_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $I_{2}\subseteq I_{2}'\subseteq X_{2}$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Proof
+Now we are ready to prove the independence axioms.
 \end_layout
 
 \begin_deeper
@@ -443,147 +789,70 @@ Let
 \end_inset
 
 .
- Since 
-\begin_inset Formula $B\in\mathcal{I}$
+ By combining proposition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:dir-sum-split-subset"
+plural "false"
+caps "false"
+noprefix "false"
+
 \end_inset
 
-, by definition of 
-\begin_inset Formula $\mathcal{I}$
-\end_inset
+ with proposition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:dir-sum-split-indep"
+plural "false"
+caps "false"
+noprefix "false"
 
- it can be represented as 
-\begin_inset Formula $B=B_{1}\cup B_{2}$
-\end_inset
-
- with 
-\begin_inset Formula $B_{1}\in\mathcal{I}_{1}$
-\end_inset
-
- and 
-\begin_inset Formula $B_{2}\in\mathcal{I}_{2}$
-\end_inset
-
-.
- Let 
-\begin_inset Formula $A_{1}=A\cap B_{1}$
-\end_inset
-
- and 
-\begin_inset Formula $A_{2}=A\cap B_{2}$
-\end_inset
-
-.
- Since 
-\begin_inset Formula $A_{1}\subseteq B_{1}$
-\end_inset
-
- and 
-\begin_inset Formula $B_{1}\in\mathcal{I}_{1}$
-\end_inset
-
-, by independence axiom 2 in 
-\begin_inset Formula $\mathcal{M}_{1}$
-\end_inset
-
- we have 
-\begin_inset Formula $A_{1}\in\mathcal{I}_{1}$
-\end_inset
-
-.
- By repeating this for 
-\begin_inset Formula $\mathcal{M}_{2}$
 \end_inset
 
 , we get 
-\begin_inset Formula $A_{2}\in\mathcal{I}_{2}$
-\end_inset
-
-.
- Thus, 
-\begin_inset Formula $A=A_{1}\cup A_{2}$
-\end_inset
-
- where 
-\begin_inset Formula $A_{1}\in\mathcal{I}_{1}$
+\begin_inset Formula $A\cap E_{1}\subseteq B\cap E_{1}\in\mathcal{I}$
 \end_inset
 
  and 
-\begin_inset Formula $A_{2}\in\mathcal{I}_{2}$
+\begin_inset Formula $A\cap E_{2}\subseteq B\cap E_{2}\in\mathcal{I}$
+\end_inset
+
+.
+ By independence axiom 2 for 
+\begin_inset Formula $\mathcal{M}_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{M}_{2}$
+\end_inset
+
+, this implies 
+\begin_inset Formula $A\cap E_{1}\in\mathcal{I}$
+\end_inset
+
+ and 
+\begin_inset Formula $A\cap E_{2}\in\mathcal{I}$
 \end_inset
 
 , so 
 \begin_inset Formula $A\in\mathcal{I}$
 \end_inset
 
-by definition of 
-\begin_inset Formula $\mathcal{I}$
+ by proposition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:dir-sum-split-indep"
+plural "false"
+caps "false"
+noprefix "false"
+
 \end_inset
 
 .
 \end_layout
 
 \begin_layout Enumerate
-We split the proof into two parts.
-\end_layout
-
-\begin_deeper
-\begin_layout Enumerate
-First, let us show that if 
-\begin_inset Formula $I\in\mathcal{I}^{\max}$
-\end_inset
-
-, then 
-\begin_inset Formula $I\cap E_{1}\in\mathcal{I}_{1}^{\max}$
-\end_inset
-
- and 
-\begin_inset Formula $I\cap E_{2}\in\mathcal{I}_{2}^{\max}$
-\end_inset
-
-.
- To this end, suppose that 
-\begin_inset Formula $I\cap E_{1}\notin\mathcal{I}_{1}^{\max}$
-\end_inset
-
-, i.e., there is 
-\begin_inset Formula $x\in E_{1}\setminus I$
-\end_inset
-
- such that 
-\begin_inset Formula $\left(I\cap E_{1}\right)+x\in\mathcal{I}_{1}$
-\end_inset
-
-.
- But then 
-\begin_inset Formula $\left(I\cap E_{1}\right)+\left(I\cap E_{2}\right)+x\in\mathcal{I}$
-\end_inset
-
- by definition of 
-\begin_inset Formula $\mathcal{I}$
-\end_inset
-
-, which contradicts maximality of 
-\begin_inset Formula $I$
-\end_inset
-
-.
- The proof for 
-\begin_inset Formula $I\cap E_{2}$
-\end_inset
-
- is identical up to swapping the roles of 
-\begin_inset Formula $\mathcal{M}_{1}$
-\end_inset
-
- and 
-\begin_inset Formula $\mathcal{M}_{2}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Enumerate
-Now, let 
+Let 
 \begin_inset Formula $I\in\mathcal{I}\setminus\mathcal{I}^{\max}$
 \end_inset
 
@@ -592,7 +861,16 @@ Now, let
 \end_inset
 
 .
- Let us introduce the following notation: 
+ Our goal is to show that there exists 
+\begin_inset Formula $x\in I'\setminus I$
+\end_inset
+
+ such that 
+\begin_inset Formula $I+x\in\mathcal{I}$
+\end_inset
+
+.
+ To simplify notation, let 
 \begin_inset Formula $I_{1}=I\cap E_{1}$
 \end_inset
 
@@ -609,21 +887,33 @@ Now, let
 \end_inset
 
 .
- From the first part of the proof we know that 
-\begin_inset Formula $I_{1}'\in\mathcal{I}_{1}$
+ By proposition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:dir-sum-split-max"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ applied to 
+\begin_inset Formula $I'$
+\end_inset
+
+, we have 
+\begin_inset Formula $I_{1}'\in\mathcal{I}_{1}^{\max}$
 \end_inset
 
  and 
-\begin_inset Formula $I_{2}'\in\mathcal{I}_{2}$
+\begin_inset Formula $I_{2}'\in\mathcal{I}_{2}^{\max}$
 \end_inset
 
-.
- Additionally, as 
-\begin_inset Formula $I\notin\mathcal{I}^{\max}$
+, while by the same proposition applied to 
+\begin_inset Formula $I$
 \end_inset
 
-, the first part also implies that at least one of the following holds:
- 
+, we know that 
 \begin_inset Formula $I_{1}\notin\mathcal{I}_{1}^{\max}$
 \end_inset
 
@@ -632,28 +922,115 @@ Now, let
 \end_inset
 
 .
- 
-\begin_inset Flex TODO Note (inline)
-status open
+ We assume that 
+\begin_inset Formula $I_{1}\notin\mathcal{I}_{1}^{\max}$
+\end_inset
 
-\begin_layout Plain Layout
-Todo: show: there is an 
-\begin_inset Formula $x\in I'\setminus I$
+, as the argument in case 
+\begin_inset Formula $I_{2}\notin\mathcal{I}_{2}^{\max}$
+\end_inset
+
+ is the same up to swapping 
+\begin_inset Formula $\mathcal{M}_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{M}_{2}$
+\end_inset
+
+.
+ Since 
+\begin_inset Formula $I_{1}\in\mathcal{I}_{1}$
+\end_inset
+
+ by proposition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:dir-sum-split-indep"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, we can apply independence axiom 3 for 
+\begin_inset Formula $\mathcal{M}_{1}$
+\end_inset
+
+ to 
+\begin_inset Formula $I_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $I_{1}'$
+\end_inset
+
+, which yields 
+\begin_inset Formula $x\in I_{1}'\setminus I_{1}$
 \end_inset
 
  such that 
-\begin_inset Formula $I+x\in\mathcal{I}$
+\begin_inset Formula $I_{1}+x\in\mathcal{I}_{1}$
 \end_inset
 
-
-\end_layout
-
+.
+ Clearly, 
+\begin_inset Formula $x\in I'\setminus I$
 \end_inset
 
+: on the one hand, we have 
+\begin_inset Formula $x\in I_{1}'\subseteq I'$
+\end_inset
 
+, and on the other hand, 
+\begin_inset Formula $x\notin I$
+\end_inset
+
+ follows from 
+\begin_inset Formula $x\notin I_{1}$
+\end_inset
+
+ (by construction of 
+\begin_inset Formula $x$
+\end_inset
+
+) and purely set-theoretic facts (
+\begin_inset Formula $x\in I_{1}'\subseteq E_{1}$
+\end_inset
+
+, 
+\begin_inset Formula $I_{2}\subseteq E_{2}$
+\end_inset
+
+, 
+\begin_inset Formula $E_{1}\cap E_{2}=\emptyset$
+\end_inset
+
+, 
+\begin_inset Formula $I=I_{1}\cup I_{2}$
+\end_inset
+
+).
+ Additionally, 
+\begin_inset Formula $I_{1}+x\in\mathcal{I}_{1}$
+\end_inset
+
+ together with 
+\begin_inset Formula $I_{2}\in\mathcal{I}_{2}$
+\end_inset
+
+ implies 
+\begin_inset Formula $I+x=I_{1}+x+I_{2}\in\mathcal{I}$
+\end_inset
+
+.
+ Thus, element 
+\begin_inset Formula $x$
+\end_inset
+
+ satisfies both the desired properties.
 \end_layout
 
-\end_deeper
 \begin_layout Enumerate
 Let 
 \begin_inset Formula $I\subseteq X\subseteq E$
@@ -664,17 +1041,224 @@ Let
 \end_inset
 
 .
- For the sake of deriving a contradiction suppose that the set 
+ For the sake of deriving a contradiction, assume that the set 
 \begin_inset Formula $T=\left\{ I'\in\mathcal{I}\mid I\subseteq I'\subseteq X\right\} $
 \end_inset
 
  has no maximal element.
- 
+ Let us introduce the following notation: 
+\begin_inset Formula $I_{1}=I\cap E_{1}$
+\end_inset
+
+, 
+\begin_inset Formula $I_{2}=I\cap E_{2}$
+\end_inset
+
+, 
+\begin_inset Formula $X_{1}=X\cap E_{1}$
+\end_inset
+
+, 
+\begin_inset Formula $X_{2}=X\cap E_{2}$
+\end_inset
+
+.
+ By independence axiom 4 for 
+\begin_inset Formula $\mathcal{M}_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{M}_{2}$
+\end_inset
+
+, we know that 
+\begin_inset Formula $T_{1}=\left\{ I''\in\mathcal{I}\mid I_{1}\subseteq I''\subseteq X_{1}\right\} $
+\end_inset
+
+ and 
+\begin_inset Formula $T_{2}=\left\{ I''\in\mathcal{I}\mid I_{2}\subseteq I''\subseteq X_{2}\right\} $
+\end_inset
+
+ each have a maximal element, which we denote by 
+\begin_inset Formula $S_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $S_{2}$
+\end_inset
+
+, respectively.
+ Consider the set 
+\begin_inset Formula $S=S_{1}\cup S_{2}$
+\end_inset
+
+ and observe that 
+\begin_inset Formula $S\in T$
+\end_inset
+
+.
+ Indeed, 
+\begin_inset Formula $S\in\mathcal{I}$
+\end_inset
+
+ follows from 
+\begin_inset Formula $S=S_{1}\cup S_{2}$
+\end_inset
+
+, 
+\begin_inset Formula $S_{1}\in\mathcal{I}_{1}$
+\end_inset
+
+ (as 
+\begin_inset Formula $S_{1}\in T_{1}$
+\end_inset
+
+), and 
+\begin_inset Formula $S_{2}\in\mathcal{I}_{2}$
+\end_inset
+
+ (as 
+\begin_inset Formula $S_{2}\in T_{2}$
+\end_inset
+
+), while applying proposition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:dir-sum-split-subset"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ to 
+\begin_inset Formula $I$
+\end_inset
+
+ and 
+\begin_inset Formula $S$
+\end_inset
+
+ and to 
+\begin_inset Formula $S$
+\end_inset
+
+ and 
+\begin_inset Formula $X$
+\end_inset
+
+ yields 
+\begin_inset Formula $I\subseteq S\subseteq X$
+\end_inset
+
+.
+ Since by our assumption 
+\begin_inset Formula $T$
+\end_inset
+
+ has no maximal element, there exists 
+\begin_inset Formula $S'\in T$
+\end_inset
+
+ such that 
+\begin_inset Formula $S\subsetneq S'$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $S_{1}'=S'\cap E_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $S_{2}'=S'\cap E_{2}$
+\end_inset
+
+ and note that 
+\begin_inset Formula $S_{1}'\in\mathcal{I}_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $S_{2}'\in\mathcal{I}_{2}$
+\end_inset
+
+ by proposition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:dir-sum-split-indep"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Applying proposition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:dir-sum-split-chain"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ to 
+\begin_inset Formula $S'$
+\end_inset
+
+ yields 
+\begin_inset Formula $S_{1}'\in T_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $S_{2}'\in T_{2}$
+\end_inset
+
+.
+ By maximality of 
+\begin_inset Formula $S_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $S_{2}$
+\end_inset
+
+ in 
+\begin_inset Formula $T_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $T_{2}$
+\end_inset
+
+, respectively, we have 
+\begin_inset Formula $S_{1}'\subseteq S_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $S_{2}'\subseteq S_{2}$
+\end_inset
+
+.
+ However, this implies 
+\begin_inset Formula $S'=S_{1}'\cup S_{2}'\subseteq S_{1}\cup S_{2}=S$
+\end_inset
+
+, which contradicts 
+\begin_inset Formula $S\subsetneq S'$
+\end_inset
+
+ from earlier.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
 \begin_inset Flex TODO Note (inline)
 status open
 
 \begin_layout Plain Layout
-Todo: derive contradiction
+Questions about lean optimizations: maximality properties are automatically
+ preserved under finite unions?
 \end_layout
 
 \end_inset
@@ -682,7 +1266,6 @@ Todo: derive contradiction
 
 \end_layout
 
-\end_deeper
 \begin_layout Subsection
 Mapping
 \end_layout
