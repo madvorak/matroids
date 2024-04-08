@@ -1270,12 +1270,152 @@ Questions about lean optimizations: maximality properties are automatically
 Mapping
 \end_layout
 
-\begin_layout Standard
+\begin_layout Lemma
+Let 
+\begin_inset Formula $f\colon E'\to E$
+\end_inset
+
+ be a set mapping and let 
+\begin_inset Formula $\mathcal{M}'=\left(E',\mathcal{I}'\right)$
+\end_inset
+
+ be a matroid.
+ Let 
+\begin_inset Formula $\mathcal{I}\subseteq2^{E'}$
+\end_inset
+
+ with 
+\begin_inset Formula $I\in\mathcal{I}$
+\end_inset
+
+ if and only if 
+\begin_inset Formula $\exists I'\in\mathcal{I}'$
+\end_inset
+
+ with 
+\begin_inset Formula $f\left(I'\right)=I$
+\end_inset
+
+.
+ Then 
+\begin_inset Formula $\mathcal{M}=\left(E,\mathcal{I}\right)$
+\end_inset
+
+ is a matroid.
+\end_layout
+
+\begin_layout Proof
+\begin_inset space ~
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Observe that 
+\begin_inset Formula $\emptyset\in\mathcal{I}$
+\end_inset
+
+, since 
+\begin_inset Formula $\emptyset\in\mathcal{I}'$
+\end_inset
+
+ and 
+\begin_inset Formula $f\left(\emptyset\right)=\emptyset$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Let 
+\begin_inset Formula $A\subseteq B\subseteq E$
+\end_inset
+
+ where 
+\begin_inset Formula $B\in\mathcal{I}$
+\end_inset
+
+.
+ Then 
+\begin_inset Formula $B=f\left(B'\right)$
+\end_inset
+
+ for some 
+\begin_inset Formula $B'\in\mathcal{I}'$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $A'=f^{-1}\left(A\right)\cap B'$
+\end_inset
+
+.
+ Note that 
+\begin_inset Formula $A'\subseteq B'$
+\end_inset
+
+ by construction, so by independence axiom 2 for 
+\begin_inset Formula $\mathcal{M}'$
+\end_inset
+
+ we have 
+\begin_inset Formula $A'\in\mathcal{I}'$
+\end_inset
+
+.
+ Moreover, applying properties of images and preimages gives
+\begin_inset Formula 
+\[
+f\left(A'\right)=f\left(f^{-1}\left(A\right)\cap B'\right)=A\cap f\left(B'\right)=A\cap B=A.
+\]
+
+\end_inset
+
+Thus, 
+\begin_inset Formula $A'\in\mathcal{I}'$
+\end_inset
+
+ satisfies 
+\begin_inset Formula $A=f\left(A'\right)$
+\end_inset
+
+, so 
+\begin_inset Formula $A\in\mathcal{I}$
+\end_inset
+
+ by construction of 
+\begin_inset Formula $\mathcal{I}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Let 
+\begin_inset Formula $I\in\mathcal{I}\setminus\mathcal{I}^{\max}$
+\end_inset
+
+ and 
+\begin_inset Formula $J\in\mathcal{I}^{\max}$
+\end_inset
+
+.
+ 
 \begin_inset Flex TODO Note (inline)
 status open
 
 \begin_layout Plain Layout
-Todo: definition, proof that result is a matroid
+Todo: then 
+\begin_inset Formula $\exists x\in J\setminus I$
+\end_inset
+
+ such that 
+\begin_inset Formula $I+x\in\mathcal{I}$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -1283,6 +1423,492 @@ Todo: definition, proof that result is a matroid
 
 \end_layout
 
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Note Comment
+status open
+
+\begin_layout Enumerate
+Let 
+\begin_inset Formula $I',J'\in\mathcal{I}'$
+\end_inset
+
+ be such that 
+\begin_inset Formula $f\left(I'\right)=I$
+\end_inset
+
+, 
+\begin_inset Formula $f\left(J'\right)=J$
+\end_inset
+
+, both 
+\begin_inset Formula $\left.f\right|_{I'}$
+\end_inset
+
+ and 
+\begin_inset Formula $\left.f\right|_{J'}$
+\end_inset
+
+ are bijective, and 
+\begin_inset Formula $I'\cap J'$
+\end_inset
+
+ is maximal.
+\begin_inset Flex TODO Note (Margin)
+status open
+
+\begin_layout Plain Layout
+proof
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Observe that 
+\begin_inset Formula $I'\notin\left(\mathcal{I}'\right)^{\max}$
+\end_inset
+
+.
+ 
+\begin_inset Flex TODO Note (Margin)
+status open
+
+\begin_layout Plain Layout
+proof
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Observe that 
+\begin_inset Formula $J'\in\left(\mathcal{I}'\right)^{\max}$
+\end_inset
+
+.
+ Indeed, if 
+\begin_inset Formula $J'\notin\left(\mathcal{I}'\right)^{\max}$
+\end_inset
+
+, then 
+\begin_inset Formula $J'+j'\in\mathcal{I}'$
+\end_inset
+
+ for some 
+\begin_inset Formula $j'\in E'\setminus J'$
+\end_inset
+
+.
+ since 
+\begin_inset Formula $I\in\mathcal{I}\setminus\mathcal{I}^{\max}$
+\end_inset
+
+, there exists 
+\begin_inset Formula $x\in E\setminus I$
+\end_inset
+
+ such that 
+\begin_inset Formula $I+x\in\mathcal{I}$
+\end_inset
+
+.
+ .
+ 
+\begin_inset Flex TODO Note (Margin)
+status open
+
+\begin_layout Plain Layout
+proof
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Apply independence axiom 3 in 
+\begin_inset Formula $\mathcal{M}'$
+\end_inset
+
+ to 
+\begin_inset Formula $I'$
+\end_inset
+
+ and 
+\begin_inset Formula $J'$
+\end_inset
+
+ to obtain element 
+\begin_inset Formula $x'\in J'\setminus I'$
+\end_inset
+
+ such that 
+\begin_inset Formula $I'+x'\in\mathcal{I}'$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $x=f\left(x'\right)$
+\end_inset
+
+.
+ Consider two cases.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Assume that 
+\begin_inset Formula $x\in J\cap I$
+\end_inset
+
+.
+ Since 
+\begin_inset Formula $\left.f\right|_{I'}$
+\end_inset
+
+ is bijective, there exists 
+\begin_inset Formula $\tilde{x}\in I'$
+\end_inset
+
+ such that 
+\begin_inset Formula $f\left(\tilde{x}\right)=x$
+\end_inset
+
+.
+ Observe that 
+\begin_inset Formula $\tilde{x}\notin I'\cap J'$
+\end_inset
+
+, since 
+\begin_inset Formula $\left.f\right|_{J'}$
+\end_inset
+
+ is bijective and 
+\begin_inset Formula $f\left(\tilde{x}\right)=f\left(x'\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $x'\in J'\setminus I'$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $\tilde{I}=I'-\tilde{x}+x'$
+\end_inset
+
+.
+ By construction, 
+\begin_inset Formula $f\left(\tilde{I}\right)=I$
+\end_inset
+
+, 
+\begin_inset Formula $\left.f\right|_{\tilde{I}}$
+\end_inset
+
+ is bijective, and 
+\begin_inset Formula $\tilde{I}\cap J'\supsetneq I'\cap J'$
+\end_inset
+
+.
+ Thus, we arrive at a contradiction with maximality of 
+\begin_inset Formula $I'\cap J'$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Assume that 
+\begin_inset Formula $x\in J\setminus I$
+\end_inset
+
+.
+ Then 
+\begin_inset Formula $f\left(I'+x'\right)=f\left(I'\right)+x=I+x$
+\end_inset
+
+, hence 
+\begin_inset Formula $I+x\in\mathcal{I}$
+\end_inset
+
+.
+ Thus, 
+\begin_inset Formula $x$
+\end_inset
+
+ is a desired extension of 
+\begin_inset Formula $I$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Let 
+\begin_inset Formula $I\subseteq X\subseteq E$
+\end_inset
+
+ where 
+\begin_inset Formula $I\in\mathcal{I}$
+\end_inset
+
+ and let 
+\begin_inset Formula $T=\left\{ J\in\mathcal{I}\mid I\subseteq J\subseteq X\right\} $
+\end_inset
+
+.
+ 
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+Todo: then 
+\begin_inset Formula $T$
+\end_inset
+
+ has a maximal element
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Note Comment
+status open
+
+\begin_layout Enumerate
+Let 
+\begin_inset Formula $\tilde{X}=X\cap f\left(E'\right)$
+\end_inset
+
+ and note that every 
+\begin_inset Formula $J\in T$
+\end_inset
+
+ satisfies 
+\begin_inset Formula $J\subseteq\tilde{X}$
+\end_inset
+
+.
+ Indeed, 
+\begin_inset Formula $J\in\mathcal{I}$
+\end_inset
+
+ implies that 
+\begin_inset Formula $J=f\left(J'\right)$
+\end_inset
+
+ for some 
+\begin_inset Formula $J'\subseteq E'$
+\end_inset
+
+ (in fact, 
+\begin_inset Formula $J'\in\mathcal{I}'$
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Enumerate
+Given 
+\begin_inset Formula $I\subseteq\tilde{X}\subseteq f\left(E'\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $I\in\mathcal{I}$
+\end_inset
+
+, there exist 
+\begin_inset Formula $I'\subseteq X'\subseteq E'$
+\end_inset
+
+ such that 
+\begin_inset Formula $I'\in\mathcal{I}'$
+\end_inset
+
+, 
+\begin_inset Formula $f\left(I'\right)=I$
+\end_inset
+
+, 
+\begin_inset Formula $f\left(X'\right)=\tilde{X}$
+\end_inset
+
+ and 
+\begin_inset Formula $\left.f\right|_{X'}$
+\end_inset
+
+ is bijective.
+ This can be shown using the axiom of choice.
+\begin_inset Flex TODO Note (Margin)
+status open
+
+\begin_layout Plain Layout
+need more details?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+By independence axiom 4 in 
+\begin_inset Formula $\mathcal{M}'$
+\end_inset
+
+, the set 
+\begin_inset Formula $T'=\left\{ J'\in\mathcal{I}'\mid I'\subseteq J'\subseteq X'\right\} $
+\end_inset
+
+ has a maximal element, which we denote 
+\begin_inset Formula $S'$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $S=f\left(S'\right)$
+\end_inset
+
+ and observe that 
+\begin_inset Formula $S\in\mathcal{I}$
+\end_inset
+
+, since 
+\begin_inset Formula $S'\in T'\subseteq\mathcal{I}'$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+For the sake of deriving a contradiction, suppose that 
+\begin_inset Formula $T$
+\end_inset
+
+ has no maximal element.
+ In particular, 
+\begin_inset Formula $S$
+\end_inset
+
+ is not maximal, so there exists 
+\begin_inset Formula $Q\in T$
+\end_inset
+
+ such that 
+\begin_inset Formula $S\subsetneq Q$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+Todo: complete proof
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Note*
+The following lemmas in Lean 4 about properties of images and preimages
+ are relevant here:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset listings
+lstparams "language=TeX"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+Set.image_preimage_inter
+\end_layout
+
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Itemize
+\begin_inset listings
+lstparams "language=TeX"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+Set.subset_preimage_image
+\end_layout
+
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Itemize
+\begin_inset listings
+lstparams "language=TeX"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+Set.preimage_mono
+\end_layout
+
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Itemize
+\begin_inset listings
+lstparams "language=TeX"
+inline true
+status open
+
+\begin_layout Plain Layout
+
+Set.image_mono
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
 \begin_layout Subsection
 Union
 \end_layout
