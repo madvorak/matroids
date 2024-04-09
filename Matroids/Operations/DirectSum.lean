@@ -5,7 +5,7 @@ import Matroids.Automation.Tactics
 
 variable {α : Type*}
 
-lemma lemma411a {A B E₁ E₂ : Set α} (hA : A ⊆ E₁ ∪ E₂) :
+lemma subset_iff_subsets_of_disjoint {A B E₁ E₂ : Set α} (hA : A ⊆ E₁ ∪ E₂) :
     A ⊆ B ↔ A ∩ E₁ ⊆ B ∩ E₁ ∧ A ∩ E₂ ⊆ B ∩ E₂ := by
   constructor
   · setauto
@@ -16,7 +16,8 @@ lemma lemma411a {A B E₁ E₂ : Set α} (hA : A ⊆ E₁ ∪ E₂) :
     specialize hE₂ x
     tauto
 
-lemma lemma411b {A B E₁ E₂ : Set α} (hA : A ⊆ E₁ ∪ E₂) (hB : B ⊆ E₁ ∪ E₂) (hE : E₁ ∩ E₂ = ∅) (hAB : A ⊂ B) :
+lemma strict_subsets_of_disjoint {A B E₁ E₂ : Set α}
+    (hA : A ⊆ E₁ ∪ E₂) (hB : B ⊆ E₁ ∪ E₂) (hE : E₁ ∩ E₂ = ∅) (hAB : A ⊂ B) :
     A ∩ E₁ ⊂ B ∩ E₁ ∨ A ∩ E₂ ⊂ B ∩ E₂ := by
   obtain ⟨_, hBA⟩ := hAB
   rw [Set.not_subset] at hBA
@@ -36,15 +37,24 @@ lemma lemma411b {A B E₁ E₂ : Set α} (hA : A ⊆ E₁ ∪ E₂) (hB : B ⊆ 
   else
     tauto
 
-def indep_direct_sum (M₁ M₂ : IndepMatroid α) (I : Set α) : Prop :=
+def indepDirectSum (M₁ M₂ : IndepMatroid α) (I : Set α) : Prop :=
   ∃ I₁ I₂ : Set α, I₁ ∪ I₂ = I ∧ M₁.Indep I₁ ∧ M₂.Indep I₂
 
-lemma lemma412 {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) {I : Set α} (hI : I ⊆ M₁.E ∪ M₂.E) :
-    indep_direct_sum M₁ M₂ I ↔ M₁.Indep (I ∩ M₁.E) ∧ M₂.Indep (I ∩ M₂.E) := by
+/-
+Potential refactor which would be pretty lean but less compatible with `IndepMatroid`:
+
+def indepDirectSum (M₁ M₂ : IndepMatroid α) : Set (Set α) :=
+  Set.image2 (· ∪ ·) M₁.Indep M₂.Indep
+-/
+
+lemma indepDirectSum_iff_of_disjoint {M₁ M₂ : IndepMatroid α}
+    (hME : M₁.E ∩ M₂.E = ∅) {I : Set α} (hI : I ⊆ M₁.E ∪ M₂.E) :
+    indepDirectSum M₁ M₂ I ↔ M₁.Indep (I ∩ M₁.E) ∧ M₂.Indep (I ∩ M₂.E) := by
   constructor
-  · intro ⟨I₁, I₂, _hI, hI₁, hI₂⟩
-    rw [←_hI] at hI ⊢
-    clear _hI
+  · clear hI
+    intro ⟨I₁, I₂, hI, hI₁, hI₂⟩
+    rw [←hI]
+    clear hI
     constructor
     · convert M₁.indep_subset hI₁ (Set.inter_subset_right M₁.E I₁) using 1
       rw [Set.union_inter_distrib_right]
@@ -62,25 +72,25 @@ lemma lemma412 {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) {I 
     use I ∩ M₁.E, I ∩ M₂.E
     aesop
 
-lemma ground {M₁ M₂ : IndepMatroid α} {I : Set α} (hI : indep_direct_sum M₁ M₂ I) :
+lemma indepDirectSum_ground {M₁ M₂ : IndepMatroid α} {I : Set α} (hI : indepDirectSum M₁ M₂ I) :
     I ⊆ M₁.E ∪ M₂.E := by
   obtain ⟨_, _, rfl, hM₁, hM₂⟩ := hI
   exact Set.union_subset_union (M₁.subset_ground _ hM₁) (M₂.subset_ground _ hM₂)
 
-def matroid_direct_sum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) : IndepMatroid α :=
+def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) : IndepMatroid α :=
   IndepMatroid.mk
     (M₁.E ∪ M₂.E)
-    (indep_direct_sum M₁ M₂)
+    (indepDirectSum M₁ M₂)
     ⟨∅, ∅, Set.union_self ∅, M₁.indep_empty, M₂.indep_empty⟩
-    (fun A B hB hAB => by
+    (fun A B hMB hAB => by
       have hA : A ⊆ M₁.E ∪ M₂.E
       · apply hAB.trans
-        exact ground hB
-      rw [lemma412 hME hA]
-      rw [lemma412 hME (ground hB)] at hB
-      rw [lemma411a hA] at hAB
+        exact indepDirectSum_ground hMB
+      rw [indepDirectSum_iff_of_disjoint hME hA]
+      rw [indepDirectSum_iff_of_disjoint hME (indepDirectSum_ground hMB)] at hMB
+      rw [subset_iff_subsets_of_disjoint hA] at hAB
       obtain ⟨hE₁, hE₂⟩ := hAB
-      obtain ⟨hB₁, hB₂⟩ := hB
+      obtain ⟨hB₁, hB₂⟩ := hMB
       exact ⟨M₁.indep_subset hB₁ hE₁, M₂.indep_subset hB₂ hE₂⟩
     )
     (by
@@ -94,7 +104,7 @@ def matroid_direct_sum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = 
         sorry
       else
         exfalso
-        simp [indep_direct_sum, maximals] at hInimax hI₁nimax hI₂nimax
+        simp [indepDirectSum, maximals] at hInimax hI₁nimax hI₂nimax
         obtain ⟨X, hXI₂, hXI₁, X₁, X₂, hMIX₂, hMIX₁, hX, hhX⟩ := hInimax I₁ I₂ rfl hI₁ hI₂
         apply hhX
         have hX₁ : I₁ ⊆ X₁ := by
@@ -108,12 +118,11 @@ def matroid_direct_sum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = 
           clear * - hcap₁ hXI₁
           intro a ha
           cases hXI₁ ha with
-          | inl h => exact h
-          | inr h =>
+          | inl haX₁ => exact haX₁
+          | inr haX₂ =>
             exfalso
-            have : a ∈ I₁ ∩ X₂ := ⟨ha, h⟩
-            rw [hcap₁] at this
-            simp at this
+            have ha' : a ∈ I₁ ∩ X₂ := ⟨ha, haX₂⟩
+            simp [hcap₁] at ha'
         have hX₂ : I₂ ⊆ X₂
         · simp only [← hX] at *
           have hcap₂ : I₂ ∩ X₁ = ∅
@@ -125,11 +134,11 @@ def matroid_direct_sum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = 
           clear * - hcap₂ hXI₂
           intro a ha
           cases hXI₂ ha with
-          | inl h =>
+          | inl haX₁ =>
             exfalso
-            have : a ∈ I₂ ∩ X₁ := ⟨ha, h⟩
-            simp [hcap₂] at this
-          | inr h => exact h
+            have ha' : a ∈ I₂ ∩ X₁ := ⟨ha, haX₁⟩
+            simp [hcap₂] at ha'
+          | inr haX₂ => exact haX₂
         rw [← hX]
         sorry
     )
@@ -142,4 +151,4 @@ def matroid_direct_sum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = 
       obtain ⟨⟨hindepT₂, hI₂subT₂, hT₂subX, hT₂subE⟩, hB₂⟩ := hT₂
       sorry
     )
-    (fun _ => ground)
+    (fun _ => indepDirectSum_ground)

@@ -2,7 +2,7 @@ import Mathlib.Data.Matroid.IndepAxioms
 import Mathlib.Tactic.Have
 
 
-def matroid_union {α : Type*} (M₁ M₂ : IndepMatroid α) (hME : M₁.E = M₂.E) :=
+def indepMatroidUnion {α : Type*} (M₁ M₂ : IndepMatroid α) (hME : M₁.E = M₂.E) :=
   IndepMatroid.mk
     M₁.E
     (fun I : Set α => ∃ I₁ I₂ : Set α, I₁ ∪ I₂ = I ∧ M₁.Indep I₁ ∧ M₂.Indep I₂)
