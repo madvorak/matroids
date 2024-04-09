@@ -76,15 +76,47 @@ lemma lemma412 {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) {I 
     use I ∩ M₁.E, I ∩ M₂.E
     aesop
 
+lemma ground {M₁ M₂ : IndepMatroid α} {I : Set α} (hI : indep_direct_sum M₁ M₂ I) :
+    I ⊆ M₁.E ∪ M₂.E := by
+  obtain ⟨_, _, rfl, hM₁, hM₂⟩ := hI
+  exact Set.union_subset_union (M₁.subset_ground _ hM₁) (M₂.subset_ground _ hM₂)
+
 def matroid_direct_sum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) : IndepMatroid α :=
   IndepMatroid.mk
     (M₁.E ∪ M₂.E)
     (indep_direct_sum M₁ M₂)
     ⟨∅, ∅, Set.union_self ∅, M₁.indep_empty, M₂.indep_empty⟩
-    (fun A B ⟨B₁, B₂, hB, hB₁, hB₂⟩ hAB =>
-      ⟨A ∩ B₁, A ∩ B₂, by aesop,
-      M₁.indep_subset hB₁ (Set.inter_subset_right A B₁),
-      M₂.indep_subset hB₂ (Set.inter_subset_right A B₂)⟩
+    (fun A B hB hAB => by
+      have hA : A ⊆ M₁.E ∪ M₂.E
+      · apply hAB.trans
+        exact ground hB
+      rw [lemma412 hME hA]
+      rw [lemma411a hA] at hAB
+      obtain ⟨hE₁, hE₂⟩ := hAB
+      obtain ⟨B₁, B₂, rfl, hB₁, hB₂⟩ := hB
+      constructor
+      · apply M₁.indep_subset hB₁
+        apply hE₁.trans
+        rw [Set.union_inter_distrib_right]
+        apply Set.union_subset
+        · apply Set.inter_subset_left
+        have hM₂ := M₂.subset_ground _ hB₂
+        setauto
+        intro x
+        specialize hME x
+        specialize hM₂ x
+        tauto
+      · apply M₂.indep_subset hB₂
+        apply hE₂.trans
+        rw [Set.union_inter_distrib_right]
+        apply Set.union_subset; swap
+        · apply Set.inter_subset_left
+        have hM₁ := M₁.subset_ground _ hB₁
+        setauto
+        intro x
+        specialize hME x
+        specialize hM₁ x
+        tauto
     )
     (by
       intro I B ⟨I₁, I₂, hI, hI₁, hI₂⟩ hInimax hBinmax
@@ -145,8 +177,4 @@ def matroid_direct_sum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = 
       obtain ⟨⟨hindepT₂, hI₂subT₂, hT₂subX, hT₂subE⟩, hB₂⟩ := hT₂
       sorry
     )
-    (by
-      intro I hI
-      obtain ⟨_, _, rfl, hM₁, hM₂⟩ := hI
-      exact Set.union_subset_union (M₁.subset_ground _ hM₁) (M₂.subset_ground _ hM₂)
-    )
+    (fun _ => ground)
