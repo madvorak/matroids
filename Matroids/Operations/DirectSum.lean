@@ -91,32 +91,11 @@ def matroid_direct_sum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = 
       · apply hAB.trans
         exact ground hB
       rw [lemma412 hME hA]
+      rw [lemma412 hME (ground hB)] at hB
       rw [lemma411a hA] at hAB
       obtain ⟨hE₁, hE₂⟩ := hAB
-      obtain ⟨B₁, B₂, rfl, hB₁, hB₂⟩ := hB
-      constructor
-      · apply M₁.indep_subset hB₁
-        apply hE₁.trans
-        rw [Set.union_inter_distrib_right]
-        apply Set.union_subset
-        · apply Set.inter_subset_left
-        have hM₂ := M₂.subset_ground _ hB₂
-        setauto
-        intro x
-        specialize hME x
-        specialize hM₂ x
-        tauto
-      · apply M₂.indep_subset hB₂
-        apply hE₂.trans
-        rw [Set.union_inter_distrib_right]
-        apply Set.union_subset; swap
-        · apply Set.inter_subset_left
-        have hM₁ := M₁.subset_ground _ hB₁
-        setauto
-        intro x
-        specialize hME x
-        specialize hM₁ x
-        tauto
+      obtain ⟨hB₁, hB₂⟩ := hB
+      exact ⟨M₁.indep_subset hB₁ hE₁, M₂.indep_subset hB₂ hE₂⟩
     )
     (by
       intro I B ⟨I₁, I₂, hI, hI₁, hI₂⟩ hInimax hBinmax
