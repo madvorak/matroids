@@ -18,7 +18,29 @@ lemma lemma411a {A B E₁ E₂ : Set α} (hA : A ⊆ E₁ ∪ E₂) :
 
 lemma lemma411b {A B E₁ E₂ : Set α} (hA : A ⊆ E₁ ∪ E₂) (hB : B ⊆ E₁ ∪ E₂) (hE : E₁ ∩ E₂ = ∅) (hAB : A ⊂ B) :
     A ∩ E₁ ⊂ B ∩ E₁ ∨ A ∩ E₂ ⊂ B ∩ E₂ := by
-  sorry
+  obtain ⟨_, hBA⟩ := hAB
+  rw [Set.not_subset] at hBA
+  obtain ⟨a, _, _⟩ := hBA
+  if ha : a ∈ E₁ ∪ E₂ then
+    cases ha with
+    | inl =>
+      left
+      constructor
+      · setauto
+      · setauto
+        push_neg
+        use a
+        tauto
+    | inr =>
+      right
+      constructor
+      · setauto
+      · setauto
+        push_neg
+        use a
+        tauto
+  else
+    tauto
 
 def indep_direct_sum (M₁ M₂ : IndepMatroid α) (I : Set α) : Prop :=
   ∃ I₁ I₂ : Set α, I₁ ∪ I₂ = I ∧ M₁.Indep I₁ ∧ M₂.Indep I₂
