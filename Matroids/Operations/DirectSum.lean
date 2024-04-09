@@ -3,18 +3,69 @@ import Mathlib.Tactic.Have
 import Matroids.Automation.Tactics
 
 
-def matroid_direct_sum {α: Type*} (M₁ M₂ : IndepMatroid α) (hME : M₁.E ∩ M₂.E = ∅) :=
+variable {α: Type*}
+
+lemma lemma411a {A B E₁ E₂ : Set α} (hA : A ⊆ E₁ ∪ E₂) :
+    A ⊆ B ↔ A ∩ E₁ ⊆ B ∩ E₁ ∧ A ∩ E₂ ⊆ B ∩ E₂ := by
+  constructor
+  · setauto
+  · intro ⟨hE₁, hE₂⟩ x
+    setauto
+    specialize hA x
+    specialize hE₁ x
+    specialize hE₂ x
+    tauto
+
+lemma lemma411b {A B E₁ E₂ : Set α} (hA : A ⊆ E₁ ∪ E₂) (hB : B ⊆ E₁ ∪ E₂) (hE : E₁ ∩ E₂ = ∅) (hAB : A ⊂ B) :
+    A ∩ E₁ ⊂ B ∩ E₁ ∨ A ∩ E₂ ⊂ B ∩ E₂ := by
+  sorry
+
+def indep_direct_sum (M₁ M₂ : IndepMatroid α) (I : Set α) : Prop :=
+  ∃ I₁ I₂ : Set α, I₁ ∪ I₂ = I ∧ M₁.Indep I₁ ∧ M₂.Indep I₂
+
+lemma lemma412 {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) {I : Set α} (hI : I ⊆ M₁.E ∪ M₂.E) :
+    indep_direct_sum M₁ M₂ I ↔ M₁.Indep (I ∩ M₁.E) ∧ M₂.Indep (I ∩ M₂.E) := by
+  constructor
+  · intro ⟨I₁, I₂, _hI, hI₁, hI₂⟩
+    rw [←_hI] at hI ⊢
+    clear _hI
+    constructor
+    · convert M₁.indep_subset hI₁ (Set.inter_subset_right M₁.E I₁) using 1
+      rw [Set.union_inter_distrib_right]
+      conv => rhs; rw [Set.inter_comm]
+      convert Set.union_empty _
+      have hM₂ := M₂.subset_ground I₂ hI₂
+      setauto
+      intro x
+      specialize hME x
+      specialize hM₂ x
+      tauto
+    · convert M₂.indep_subset hI₂ (Set.inter_subset_right M₂.E I₂) using 1
+      rw [Set.union_inter_distrib_right]
+      conv => rhs; rw [Set.inter_comm]
+      convert Set.empty_union _
+      have hM₁ := M₁.subset_ground I₁ hI₁
+      setauto
+      intro x
+      specialize hME x
+      specialize hM₁ x
+      tauto
+  · intro ⟨hM₁, hM₂⟩
+    use I ∩ M₁.E, I ∩ M₂.E
+    aesop
+
+def matroid_direct_sum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) : IndepMatroid α :=
   IndepMatroid.mk
     (M₁.E ∪ M₂.E)
-    (fun I : Set α => ∃ I₁ I₂, I₁ ∪ I₂ = I ∧ M₁.Indep I₁ ∧ M₂.Indep I₂)
+    (indep_direct_sum M₁ M₂)
     ⟨∅, ∅, Set.union_self ∅, M₁.indep_empty, M₂.indep_empty⟩
     (fun A B ⟨B₁, B₂, hB, hB₁, hB₂⟩ hAB =>
       ⟨A ∩ B₁, A ∩ B₂, by aesop,
       M₁.indep_subset hB₁ (Set.inter_subset_right A B₁),
-      M₂.indep_subset hB₂ (Set.inter_subset_right A B₂)⟩)
+      M₂.indep_subset hB₂ (Set.inter_subset_right A B₂)⟩
+    )
     (by
       intro I B ⟨I₁, I₂, hI, hI₁, hI₂⟩ hInimax hBinmax
-      -- simp [maximals] at hInimax hBinmax
       obtain ⟨⟨B₁, B₂, hB₁₂, hB₁, hB₂⟩, hBnoext⟩ := hBinmax
       rw [← hI] at *
       clear hI I
@@ -24,7 +75,7 @@ def matroid_direct_sum {α: Type*} (M₁ M₂ : IndepMatroid α) (hME : M₁.E �
         sorry
       else
         exfalso
-        simp [maximals] at hInimax hI₁nimax hI₂nimax
+        simp [indep_direct_sum, maximals] at hInimax hI₁nimax hI₂nimax
         obtain ⟨X, hXI₂, hXI₁, X₁, X₂, hMIX₂, hMIX₁, hX, hhX⟩ := hInimax I₁ I₂ rfl hI₁ hI₂
         apply hhX
         have hX₁ : I₁ ⊆ X₁ := by

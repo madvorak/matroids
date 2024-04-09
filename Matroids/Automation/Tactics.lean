@@ -10,6 +10,8 @@ macro "setauto" : tactic =>
       Set.mem_inter_iff,
       Set.mem_union,
       Set.mem_compl_iff,
+      Set.mem_univ,
+      Set.not_mem_empty,
     ] at *
     <;>
     try tauto)
@@ -69,3 +71,7 @@ macro "setesop" : tactic =>
     ] at *
     <;>
     try aesop)
+
+example (α : Type) (A : Set α) (hA : Aᶜ ⊆ ∅) :
+    A = Set.univ := by
+  setesop
