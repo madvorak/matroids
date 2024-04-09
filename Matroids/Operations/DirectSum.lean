@@ -3,7 +3,7 @@ import Mathlib.Tactic.Have
 import Matroids.Automation.Tactics
 
 
-variable {α: Type*}
+variable {α : Type*}
 
 lemma lemma411a {A B E₁ E₂ : Set α} (hA : A ⊆ E₁ ∪ E₂) :
     A ⊆ B ↔ A ∩ E₁ ⊆ B ∩ E₁ ∧ A ∩ E₂ ⊆ B ∩ E₂ := by
@@ -80,13 +80,12 @@ def matroid_direct_sum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = 
         apply hhX
         have hX₁ : I₁ ⊆ X₁ := by
           simp only [← hX] at *
-          have hcap₁ : I₁ ∩ X₂ = ∅ := (by
+          have hcap₁ : I₁ ∩ X₂ = ∅
+          · clear * - hI₁ hMIX₁ hMIX₂ hME
             apply M₁.subset_ground at hMIX₁
             apply M₂.subset_ground at hMIX₂
             apply M₁.subset_ground at hI₁
-            clear * - hI₁ hMIX₁ hMIX₂ hME
             setesop
-          )
           clear * - hcap₁ hXI₁
           intro a ha
           cases hXI₁ ha with
@@ -96,15 +95,14 @@ def matroid_direct_sum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = 
             have : a ∈ I₁ ∩ X₂ := ⟨ha, h⟩
             rw [hcap₁] at this
             simp at this
-        have hX₂ : I₂ ⊆ X₂ := by
-          simp only [← hX] at *
-          have hcap₂ : I₂ ∩ X₁ = ∅ := (by
+        have hX₂ : I₂ ⊆ X₂
+        · simp only [← hX] at *
+          have hcap₂ : I₂ ∩ X₁ = ∅
+          · clear * - hI₂ hMIX₁ hMIX₂ hME
             apply M₁.subset_ground at hMIX₁
             apply M₂.subset_ground at hMIX₂
             apply M₂.subset_ground at hI₂
-            clear * - hI₂ hMIX₁ hMIX₂ hME
             setesop
-          )
           clear * - hcap₂ hXI₂
           intro a ha
           cases hXI₂ ha with
@@ -118,8 +116,8 @@ def matroid_direct_sum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = 
     )
     (by
       intro X hX I ⟨I₁, I₂, hI₁₂, hI₁, hI₂⟩ hIX
-      obtain ⟨T₁, hT₁⟩ := M₁.indep_maximal (X ∩ M₁.E) (by exact Set.inter_subset_right X M₁.E) I₁ hI₁ sorry
-      obtain ⟨T₂, hT₂⟩ := M₂.indep_maximal (X ∩ M₂.E) (by exact Set.inter_subset_right X M₂.E) I₂ hI₂ sorry
+      obtain ⟨T₁, hT₁⟩ := M₁.indep_maximal (X ∩ M₁.E) (Set.inter_subset_right X M₁.E) I₁ hI₁ sorry
+      obtain ⟨T₂, hT₂⟩ := M₂.indep_maximal (X ∩ M₂.E) (Set.inter_subset_right X M₂.E) I₂ hI₂ sorry
       simp [maximals] at hT₁ hT₂ ⊢
       obtain ⟨⟨hindepT₁, hI₁subT₁, hT₁subX, hT₁subE⟩, hB₁⟩ := hT₁
       obtain ⟨⟨hindepT₂, hI₂subT₂, hT₂subX, hT₂subE⟩, hB₂⟩ := hT₂
