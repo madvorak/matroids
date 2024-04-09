@@ -27,18 +27,12 @@ lemma lemma411b {A B E₁ E₂ : Set α} (hA : A ⊆ E₁ ∪ E₂) (hB : B ⊆ 
       left
       constructor
       · setauto
-      · setauto
-        push_neg
-        use a
-        tauto
+      · setesop
     | inr =>
       right
       constructor
       · setauto
-      · setauto
-        push_neg
-        use a
-        tauto
+      · setesop
   else
     tauto
 
@@ -57,21 +51,13 @@ lemma lemma412 {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) {I 
       conv => rhs; rw [Set.inter_comm]
       convert Set.union_empty _
       have hM₂ := M₂.subset_ground I₂ hI₂
-      setauto
-      intro x
-      specialize hME x
-      specialize hM₂ x
-      tauto
+      setesop
     · convert M₂.indep_subset hI₂ (Set.inter_subset_right M₂.E I₂) using 1
       rw [Set.union_inter_distrib_right]
       conv => rhs; rw [Set.inter_comm]
       convert Set.empty_union _
       have hM₁ := M₁.subset_ground I₁ hI₁
-      setauto
-      intro x
-      specialize hME x
-      specialize hM₁ x
-      tauto
+      setesop
   · intro ⟨hM₁, hM₂⟩
     use I ∩ M₁.E, I ∩ M₂.E
     aesop
