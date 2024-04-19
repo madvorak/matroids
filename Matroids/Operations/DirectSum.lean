@@ -72,6 +72,11 @@ lemma indepDirectSum_iff_of_disjoint {M₁ M₂ : IndepMatroid α}
     use I ∩ M₁.E, I ∩ M₂.E
     aesop
 
+lemma indepDirectSum_iff_disjoint_maximals {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) {I : Set α} :
+    I ∈ maximals (· ⊆ ·) {I | indepDirectSum M₁ M₂ I}
+    ↔ I ∩ M₁.E ∈ maximals (· ⊆ ·) M₁.Indep ∧ I ∩ M₂.E ∈ maximals (· ⊆ ·) M₂.Indep
+    := by sorry
+
 lemma indepDirectSum_ground {M₁ M₂ : IndepMatroid α} {I : Set α} (hI : indepDirectSum M₁ M₂ I) :
     I ⊆ M₁.E ∪ M₂.E := by
   obtain ⟨_, _, rfl, hM₁, hM₂⟩ := hI
@@ -94,53 +99,54 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
       exact ⟨M₁.indep_subset hB₁ hE₁, M₂.indep_subset hB₂ hE₂⟩
     )
     (by
-      intro I B ⟨I₁, I₂, hI, hI₁, hI₂⟩ hInimax hBinmax
-      obtain ⟨⟨B₁, B₂, hB₁₂, hB₁, hB₂⟩, hBnoext⟩ := hBinmax
-      rw [← hI] at *
-      clear hI I
-      if hI₁nimax: I₁ ∉ maximals Set.Subset M₁.Indep then
-        sorry
-      else if hI₂nimax: I₂ ∉ maximals Set.Subset M₂.Indep then
-        sorry
-      else
-        exfalso
-        simp [indepDirectSum, maximals] at hInimax hI₁nimax hI₂nimax
-        obtain ⟨X, hXI₂, hXI₁, X₁, X₂, hMIX₂, hMIX₁, hX, hhX⟩ := hInimax I₁ I₂ rfl hI₁ hI₂
-        apply hhX
-        have hX₁ : I₁ ⊆ X₁ := by
-          simp only [← hX] at *
-          have hcap₁ : I₁ ∩ X₂ = ∅
-          · clear * - hI₁ hMIX₁ hMIX₂ hME
-            apply M₁.subset_ground at hMIX₁
-            apply M₂.subset_ground at hMIX₂
-            apply M₁.subset_ground at hI₁
+      intro I B hI hInotmax hBmax
+
+      -- split B into B₁ = B ∩ M₁.E and B₂
+      rw [indepDirectSum_iff_disjoint_maximals hME] at hBmax
+      obtain ⟨hB₁, hB₂⟩ := hBmax
+
+      -- split I into I₁ and I₂
+      rw [indepDirectSum_iff_disjoint_maximals hME, not_and_or] at hInotmax
+
+      have hhI := hI
+      rw [indepDirectSum_iff_of_disjoint hME (indepDirectSum_ground hI)] at hI
+
+      cases hInotmax with
+      | inl hI₁ =>
+          obtain ⟨x, hxBmI, hxAug⟩ := M₁.indep_aug hI.left hI₁ hB₁
+          use x
+          constructor
+          · setesop
+          rw [indepDirectSum_iff_of_disjoint]
+          constructor
+          · convert hxAug using 1
             setesop
-          clear * - hcap₁ hXI₁
-          intro a ha
-          cases hXI₁ ha with
-          | inl haX₁ => exact haX₁
-          | inr haX₂ =>
-            exfalso
-            have ha' : a ∈ I₁ ∩ X₂ := ⟨ha, haX₂⟩
-            simp [hcap₁] at ha'
-        have hX₂ : I₂ ⊆ X₂
-        · simp only [← hX] at *
-          have hcap₂ : I₂ ∩ X₁ = ∅
-          · clear * - hI₂ hMIX₁ hMIX₂ hME
-            apply M₁.subset_ground at hMIX₁
-            apply M₂.subset_ground at hMIX₂
-            apply M₂.subset_ground at hI₂
-            setesop
-          clear * - hcap₂ hXI₂
-          intro a ha
-          cases hXI₂ ha with
-          | inl haX₁ =>
-            exfalso
-            have ha' : a ∈ I₂ ∩ X₁ := ⟨ha, haX₁⟩
-            simp [hcap₂] at ha'
-          | inr haX₂ => exact haX₂
-        rw [← hX]
-        sorry
+          convert hI.right using 1
+          · setesop
+          · exact hME
+          rw [Set.insert_subset_iff, Set.mem_union]
+          constructor
+          · setesop
+          · exact indepDirectSum_ground hhI
+      | inr hI₂ =>
+          obtain ⟨x, hxBmI, hxAug⟩ := M₂.indep_aug hI.right hI₂ hB₂
+          use x
+          constructor
+          · setesop
+          rw [indepDirectSum_iff_of_disjoint]
+          sorry
+          sorry
+          sorry -- todo @Martin: fix code below
+          -- constructor
+          -- · convert hxAug using 1
+          --   setesop
+          -- convert hI.right using 1
+          -- · setesop
+          -- · exact hME
+          -- rw [Set.insert_subset_iff, Set.mem_union]
+          -- constructor
+          -- · setesop
+          -- · exact indepDirectSum_ground hhI
     )
     (by
       intro X hX I ⟨I₁, I₂, hI₁₂, hI₁, hI₂⟩ hIX
