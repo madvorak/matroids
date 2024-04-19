@@ -40,6 +40,14 @@ lemma strict_subsets_of_disjoint {A B E₁ E₂ : Set α}
 def indepDirectSum (M₁ M₂ : IndepMatroid α) (I : Set α) : Prop :=
   ∃ I₁ I₂ : Set α, I₁ ∪ I₂ = I ∧ M₁.Indep I₁ ∧ M₂.Indep I₂
 
+def indepDirectSum_left {M₁ M₂ : IndepMatroid α} {I : Set α} (hM₁ : M₁.Indep I) :
+    indepDirectSum M₁ M₂ I :=
+  ⟨I, ∅, Set.union_empty I, hM₁, M₂.indep_empty⟩
+
+def indepDirectSum_right {M₁ M₂ : IndepMatroid α} {I : Set α} (hM₂ : M₂.Indep I) :
+    indepDirectSum M₁ M₂ I :=
+  ⟨∅, I, Set.empty_union I, M₁.indep_empty, hM₂⟩
+
 /-
 Potential refactor which would be pretty lean but less compatible with `IndepMatroid`:
 
@@ -72,10 +80,60 @@ lemma indepDirectSum_iff_of_disjoint {M₁ M₂ : IndepMatroid α}
     use I ∩ M₁.E, I ∩ M₂.E
     aesop
 
+lemma indepDirectSum_ground {M₁ M₂ : IndepMatroid α} {I : Set α} (hI : indepDirectSum M₁ M₂ I) :
+    I ⊆ M₁.E ∪ M₂.E := by
+  obtain ⟨_, _, rfl, hM₁, hM₂⟩ := hI
+  exact Set.union_subset_union (M₁.subset_ground _ hM₁) (M₂.subset_ground _ hM₂)
+
+lemma forall_and_forall (P Q : α → Prop) [Inhabited α] (hPQ : ∀ n m, P n ∧ Q m) : (∀ n, P n) ∧ (∀ m, Q m) := by
+  constructor
+  · intro n
+    exact (hPQ n default).left
+  · intro m
+    exact (hPQ default m).right
+
+lemma union_inters_of_disjoint (A B C : Set α) (hBC : B ∩ C = ∅) (hA : A ⊆ B ∪ C) :
+    A = A ∩ B ∪ A ∩ C :=
+  sorry
+
 lemma indepDirectSum_iff_disjoint_maximals {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) {I : Set α} :
-    I ∈ maximals (· ⊆ ·) {I | indepDirectSum M₁ M₂ I}
-    ↔ I ∩ M₁.E ∈ maximals (· ⊆ ·) M₁.Indep ∧ I ∩ M₂.E ∈ maximals (· ⊆ ·) M₂.Indep := by
-  -- =>
+    I ∈ maximals (· ⊆ ·) {I | indepDirectSum M₁ M₂ I} ↔
+      I ∩ M₁.E ∈ maximals (· ⊆ ·) M₁.Indep ∧ I ∩ M₂.E ∈ maximals (· ⊆ ·) M₂.Indep := by
+  dsimp only [maximals, Set.mem_setOf_eq]
+  have : I = I ∩ M₁.E ∪ I ∩ M₂.E
+  · apply union_inters_of_disjoint
+    exact hME
+    apply indepDirectSum_ground
+    sorry -- TODO in each branch separately
+  --rw [indepDirectSum_iff_of_disjoint hME sorry]
+  constructor <;> intro hyp -- <;> by_contra! contr
+  · rw [indepDirectSum_iff_of_disjoint hME sorry] at hyp
+    obtain ⟨⟨hM₁, hM₂⟩, hb⟩ := hyp
+    constructor
+    · constructor
+      · exact hM₁
+      · intro B₁ hB₁ hI₁
+        rw [this]
+        specialize hb ⟨B₁, I ∩ M₂.E, rfl, hB₁, hM₂⟩ (by rw [this]; setauto)
+        rw [Set.union_inter_distrib_right, Set.inter_assoc, Set.inter_assoc, Set.inter_comm M₂.E,
+            hME, Set.inter_empty, Set.union_empty, Set.inter_self]
+        have := M₁.subset_ground _ hB₁
+        setauto
+    · constructor
+      · exact hM₂
+      · intro B₂ hB₂ hI₂
+        rw [this]
+        specialize hb ⟨I ∩ M₁.E, B₂, rfl, hM₁, hB₂⟩ (by rw [this]; setauto)
+        rw [Set.union_inter_distrib_right, Set.inter_assoc, Set.inter_assoc,
+            hME, Set.inter_empty, Set.empty_union, Set.inter_self]
+        have := M₂.subset_ground _ hB₂
+        setauto -- TODO refactor
+        intro x
+        specialize hI₂ x
+        specialize hb x
+        specialize this x
+        tauto
+  -- = >
   -- by contradiction: assume one component is not maximal
   -- then we can expand it while preserving independence
   -- drag it to disjoint union, contradicts maximality
@@ -85,12 +143,27 @@ lemma indepDirectSum_iff_disjoint_maximals {M₁ M₂ : IndepMatroid α} (hME : 
   -- then we can expand it
   -- extra element is in M1 or M2
   -- drag it to components, contradicts maximality
-  sorry
+  · rw [indepDirectSum_iff_of_disjoint hME (indepDirectSum_ground _)]
+    obtain ⟨hyp₁, hyp₂⟩ := hyp
+    constructor
+    · tauto
+    · intro B hB hIB
+      have hM₁ : M₁.Indep (B ∩ M₁.E)
+      · sorry
+      have hM₂ : M₂.Indep (B ∩ M₂.E)
+      · sorry
+      have hB₁ := hyp₁.right hM₁ (by setauto)
+      have hB₂ := hyp₂.right hM₂ (by setauto)
+      rw [this] at *
+      setauto
+      intro x hx
+      specialize hME x
+      specialize hB₁ x
+      specialize hB₂ x
+      specialize hIB x
+      sorry
+    · sorry
 
-lemma indepDirectSum_ground {M₁ M₂ : IndepMatroid α} {I : Set α} (hI : indepDirectSum M₁ M₂ I) :
-    I ⊆ M₁.E ∪ M₂.E := by
-  obtain ⟨_, _, rfl, hM₁, hM₂⟩ := hI
-  exact Set.union_subset_union (M₁.subset_ground _ hM₁) (M₂.subset_ground _ hM₂)
 
 lemma indepDirectSum_chain_to_components {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅)
     {I T X : Set α} (hIT : I ⊆ T) (hTX : T ⊆ X) (hX : X ⊆ M₁.E ∪ M₂.E) :
