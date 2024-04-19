@@ -77,6 +77,25 @@ lemma indepDirectSum_ground {M₁ M₂ : IndepMatroid α} {I : Set α} (hI : ind
   obtain ⟨_, _, rfl, hM₁, hM₂⟩ := hI
   exact Set.union_subset_union (M₁.subset_ground _ hM₁) (M₂.subset_ground _ hM₂)
 
+lemma lemma4 {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅)
+    {I₁ I₂ X₁ X₂ I' : Set α} (hI₁ : I₁ ⊆ M₁.E) (hI₂ : I₂ ⊆ M₂.E)
+    (hIX₁ : I₁ ⊆ X₁) (hIX₂ : I₂ ⊆ X₂) (hII : I₁ ∪ I₂ ⊆ I') (hXX : I' ⊆ X₁ ∪ X₂) :
+    ∃ I₁' I₂', I₁' ∪ I₂' = I' ∧ (I₁ ⊆ I₁' ∧ I₁' ⊆ X₁) ∧ (I₂ ⊆ I₂' ∧ I₂' ⊆ X₂) := by
+  use I' ∩ M₁.E, I' ∩ M₂.E
+  constructor
+  · have huh : I₁ ∪ I₂ ⊆ M₁.E ∪ M₂.E
+    · sorry
+    rw [subset_iff_subsets_of_disjoint huh] at hII
+    sorry
+  constructor
+  · have : I₁ = I₁ ∩ M₁.E
+    · rw [Set.inter_comm]
+      sorry -- exact?
+    constructor
+    · sorry
+    · sorry
+  sorry
+
 def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) : IndepMatroid α :=
   IndepMatroid.mk
     (M₁.E ∪ M₂.E)
