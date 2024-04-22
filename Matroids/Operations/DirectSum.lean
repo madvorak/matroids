@@ -67,7 +67,7 @@ lemma indepDirectSum_iff_disjoint_maximals {M₁ M₂ : IndepMatroid α} (hME : 
     obtain ⟨⟨hM₁, hM₂⟩, hB⟩ := hyp
     have I_as : I = I ∩ M₁.E ∪ I ∩ M₂.E
     · apply Set.eq_union_inters_of_disjoint
-      apply indepDirectSum_ground
+      -- applying `indepDirectSum_ground` would lead to circular reasoning
       sorry
     constructor
     · constructor
