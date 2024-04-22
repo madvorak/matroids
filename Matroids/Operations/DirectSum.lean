@@ -53,9 +53,9 @@ lemma indepDirectSum_ground {M₁ M₂ : IndepMatroid α} {I : Set α} (hI : ind
   obtain ⟨_, _, rfl, hM₁, hM₂⟩ := hI
   exact Set.union_subset_union (M₁.subset_ground _ hM₁) (M₂.subset_ground _ hM₂)
 
-lemma indepDirectSum_iff_disjoint_maximals {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) {I : Set α} :
+lemma indepDirectSum_iff_disjoint_maximals {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) (I : Set α) :
     I ∈ maximals (· ⊆ ·) {I | indepDirectSum M₁ M₂ I} ↔
-      I ∩ M₁.E ∈ maximals (· ⊆ ·) M₁.Indep ∧ I ∩ M₂.E ∈ maximals (· ⊆ ·) M₂.Indep := by
+    I ∩ M₁.E ∈ maximals (· ⊆ ·) M₁.Indep ∧ I ∩ M₂.E ∈ maximals (· ⊆ ·) M₂.Indep := by
   dsimp only [maximals, Set.mem_setOf_eq]
   constructor <;> intro hyp
   -- →
@@ -132,41 +132,41 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
       exact ⟨M₁.indep_subset hB₁ hE₁, M₂.indep_subset hB₂ hE₂⟩
     )
     (by
-      intro I B hI hInotmax hBmax
+      intro I B hI I_not_max B_max
 
-      -- split `B` into `B₁ = B ∩ M₁.E` and `B₂`
-      rw [indepDirectSum_iff_disjoint_maximals hME] at hBmax
-      obtain ⟨hB₁, hB₂⟩ := hBmax
+      -- split `B` into `B₁ = B ∩ M₁.E` and `B₂ = B ∩ M₂.E`
+      rw [indepDirectSum_iff_disjoint_maximals hME] at B_max
+      obtain ⟨hB₁, hB₂⟩ := B_max
 
       -- split `I` into `I₁` and `I₂`
-      rw [indepDirectSum_iff_disjoint_maximals hME, not_and_or] at hInotmax
+      rw [indepDirectSum_iff_disjoint_maximals hME, not_and_or] at I_not_max
 
       have I_grounded := indepDirectSum_ground hI
       rw [indepDirectSum_iff_of_disjoint hME (indepDirectSum_ground hI)] at hI
 
-      cases hInotmax with
+      cases I_not_max with
       | inl hI₁ =>
-        obtain ⟨x, hxBmI, hxAug⟩ := M₁.indep_aug hI.left hI₁ hB₁
+        obtain ⟨x, hxBmI, M₁_aug⟩ := M₁.indep_aug hI.left hI₁ hB₁
         use x
         constructor
         · setesop
         rw [indepDirectSum_iff_of_disjoint]
         constructor
-        · convert hxAug using 1
+        · convert M₁_aug using 1
           setesop
         convert hI.right using 1
         · setesop
         · exact hME
         setesop
       | inr hI₂ =>
-        obtain ⟨x, hxBmI, hxAug⟩ := M₂.indep_aug hI.right hI₂ hB₂
+        obtain ⟨x, hxBmI, M₂_aug⟩ := M₂.indep_aug hI.right hI₂ hB₂
         use x
         constructor
         · setesop
         rw [indepDirectSum_iff_of_disjoint]
         constructor
         swap
-        · convert hxAug using 1
+        · convert M₂_aug using 1
           setesop
         convert hI.left using 1
         · setesop
@@ -180,46 +180,39 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
       obtain ⟨hI₁, hI₂⟩ := hI
 
       -- define `S₁` and `S₂`
-      obtain ⟨S₁, hS₁⟩ := M₁.indep_maximal (X ∩ M₁.E) (Set.inter_subset_right X M₁.E) _ hI₁ (by
-        rw [Set.subset_iff_subsets_of_disjoint I_grounded] at hIX
-        exact hIX.left
-      )
-      obtain ⟨S₂, hS₂⟩ := M₂.indep_maximal (X ∩ M₂.E) (Set.inter_subset_right X M₂.E) _ hI₂ (by
-        rw [Set.subset_iff_subsets_of_disjoint I_grounded] at hIX
-        exact hIX.right
-      )
-      dsimp [maximals] at hS₁ hS₂
+      obtain ⟨S₁, ⟨hMS₁, hIMS₁, hSE₁⟩, hS₁⟩ :=
+        M₁.indep_maximal (X ∩ M₁.E) (Set.inter_subset_right X M₁.E) _ hI₁ (by
+          rw [Set.subset_iff_subsets_of_disjoint I_grounded] at hIX
+          exact hIX.left
+        )
+      obtain ⟨S₂, ⟨hMS₂, hIMS₂, hSE₂⟩, hS₂⟩ :=
+        M₂.indep_maximal (X ∩ M₂.E) (Set.inter_subset_right X M₂.E) _ hI₂ (by
+          rw [Set.subset_iff_subsets_of_disjoint I_grounded] at hIX
+          exact hIX.right
+        )
 
-      -- apply `contr` to `S` → there is a strictly bigger `S'` with the same properties
+      -- apply `contr` to `S` → there is a strictly bigger set with the same properties
       by_contra! contr
       unfold maximals at contr
       rw [Set.eq_empty_iff_forall_not_mem] at contr
       specialize contr (S₁ ∪ S₂)
       simp at contr
-      obtain ⟨T, hTS₂, hTS₁, hTX, hIT, hTindep, hTbig⟩ :=
+      obtain ⟨T, hTS₂, hTS₁, hTX, hIT, T_indep, T_big⟩ :=
         contr
-          ⟨S₁, S₂, rfl, hS₁.left.left, hS₂.left.left⟩
+          ⟨S₁, S₂, rfl, hMS₁, hMS₂⟩
           (by
             rw [Set.subset_iff_subsets_of_disjoint I_grounded]
             constructor
-            · convert hS₁.left.right.left
-              exact Set.union_inter_eq_fst hME hS₁.left.right.right hS₂.left.right.right
-            · convert hS₂.left.right.left
-              exact Set.union_inter_eq_snd hME hS₁.left.right.right hS₂.left.right.right
+            · convert hIMS₁
+              exact Set.union_inter_eq_fst hME hSE₁ hSE₂
+            · convert hIMS₂
+              exact Set.union_inter_eq_snd hME hSE₁ hSE₂
           )
-          (by
-            have := hS₁.left.right.right
-            rw [Set.subset_inter_iff] at this
-            exact this.left
-          )
-          (by
-            have := hS₂.left.right.right
-            rw [Set.subset_inter_iff] at this
-            exact this.left
-          )
+          (Set.subset_inter_iff.mp hSE₁).left
+          (Set.subset_inter_iff.mp hSE₂).left
 
-      -- we will derive a contradiction with `hTbig`
-      apply hTbig
+      -- we will derive a contradiction with `T_big`
+      apply T_big
 
       have hTE₁ : M₁.Indep (T ∩ M₁.E)
       · sorry
@@ -227,16 +220,14 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
       · sorry
 
       -- `S₁` and `S₂` contain parts of `T` by maximality
-      have hT₁S₁ := hS₁.right ⟨hTE₁, Set.between_inter hIT hTX M₁.E⟩ (by
+      have hT₁S₁ := hS₁ ⟨hTE₁, Set.between_inter hIT hTX M₁.E⟩ (by
         convert Set.inter_subset_inter_left M₁.E hTS₁
         simp_all
       )
-      have hT₂S₂ := hS₂.right ⟨hTE₂, Set.between_inter hIT hTX M₂.E⟩ (by
+      have hT₂S₂ := hS₂ ⟨hTE₂, Set.between_inter hIT hTX M₂.E⟩ (by
         convert Set.inter_subset_inter_left M₂.E hTS₂
         simp_all
       )
-
-      -- clean up
       convert Set.union_subset_union hT₁S₁ hT₂S₂
       rw [← Set.inter_union_distrib_left, Set.left_eq_inter]
       exact hTX.trans hX

@@ -1,8 +1,8 @@
 import Mathlib.Tactic.Have
 import Matroids.Utilities.Tactics
 
-variable {α : Type*}
 
+variable {α : Type*}
 
 lemma Set.eq_union_inters_of_disjoint {A B C : Set α} (hA : A ⊆ B ∪ C) :
     A = A ∩ B ∪ A ∩ C := by
