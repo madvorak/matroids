@@ -5,7 +5,19 @@ import Matroids.Automation.Tactics
 
 variable {α : Type*}
 
-lemma subset_iff_subsets_of_disjoint {A B E₁ E₂ : Set α} (hA : A ⊆ E₁ ∪ E₂) :
+lemma Set.eq_union_inters_of_disjoint {A B C : Set α} (hA : A ⊆ B ∪ C) :
+    A = A ∩ B ∪ A ∩ C := by
+  aesop
+
+lemma Set.subset_inter_of_redundant_right {A B C D : Set α} (hAB : A ∪ D ⊆ B) (hBC : A ⊆ C) :
+    A ⊆ B ∩ C :=
+  Set.subset_inter ((Set.subset_union_left A D).trans hAB) hBC
+
+lemma Set.subset_inter_of_redundant_left {A B C D : Set α} (hAB : D ∪ A ⊆ B) (hBC : A ⊆ C) :
+    A ⊆ B ∩ C :=
+  Set.subset_inter ((Set.subset_union_right D A).trans hAB) hBC
+
+lemma Set.subset_iff_subsets_of_disjoint {A B E₁ E₂ : Set α} (hA : A ⊆ E₁ ∪ E₂) :
     A ⊆ B ↔ A ∩ E₁ ⊆ B ∩ E₁ ∧ A ∩ E₂ ⊆ B ∩ E₂ := by
   constructor
   · setauto
@@ -16,7 +28,7 @@ lemma subset_iff_subsets_of_disjoint {A B E₁ E₂ : Set α} (hA : A ⊆ E₁ �
     specialize hE₂ x
     tauto
 
-lemma strict_subsets_of_disjoint {A B E₁ E₂ : Set α}
+lemma Set.strict_subsets_of_disjoint {A B E₁ E₂ : Set α}
     (hA : A ⊆ E₁ ∪ E₂) (hB : B ⊆ E₁ ∪ E₂) (hE : E₁ ∩ E₂ = ∅) (hAB : A ⊂ B) :
     A ∩ E₁ ⊂ B ∩ E₁ ∨ A ∩ E₂ ⊂ B ∩ E₂ := by
   obtain ⟨_, hBA⟩ := hAB
@@ -36,6 +48,13 @@ lemma strict_subsets_of_disjoint {A B E₁ E₂ : Set α}
       · setesop
   else
     tauto
+
+lemma Set.chain_to_components {E₁ E₂ I T X : Set α} (hME : E₁ ∩ E₂ = ∅)
+     (hIT : I ⊆ T) (hTX : T ⊆ X) (hX : X ⊆ E₁ ∪ E₂) :
+    ((I ∩ E₁) ⊆ (T ∩ E₁) ∧ (T ∩ E₁) ⊆ (X ∩ E₁)) ∧
+    ((I ∩ E₂) ⊆ (T ∩ E₂) ∧ (T ∩ E₂) ⊆ (X ∩ E₂)) := by
+  setauto
+
 
 def indepDirectSum (M₁ M₂ : IndepMatroid α) (I : Set α) : Prop :=
   ∃ I₁ I₂ : Set α, I₁ ∪ I₂ = I ∧ M₁.Indep I₁ ∧ M₂.Indep I₂
@@ -85,54 +104,34 @@ lemma indepDirectSum_ground {M₁ M₂ : IndepMatroid α} {I : Set α} (hI : ind
   obtain ⟨_, _, rfl, hM₁, hM₂⟩ := hI
   exact Set.union_subset_union (M₁.subset_ground _ hM₁) (M₂.subset_ground _ hM₂)
 
-lemma forall_and_forall (P Q : α → Prop) [Inhabited α] (hPQ : ∀ n m, P n ∧ Q m) : (∀ n, P n) ∧ (∀ m, Q m) := by
-  constructor
-  · intro n
-    exact (hPQ n default).left
-  · intro m
-    exact (hPQ default m).right
-
-lemma union_inters_of_disjoint (A B C : Set α) (hBC : B ∩ C = ∅) (hA : A ⊆ B ∪ C) :
-    A = A ∩ B ∪ A ∩ C :=
-  sorry
-
 lemma indepDirectSum_iff_disjoint_maximals {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) {I : Set α} :
     I ∈ maximals (· ⊆ ·) {I | indepDirectSum M₁ M₂ I} ↔
       I ∩ M₁.E ∈ maximals (· ⊆ ·) M₁.Indep ∧ I ∩ M₂.E ∈ maximals (· ⊆ ·) M₂.Indep := by
   dsimp only [maximals, Set.mem_setOf_eq]
-  have : I = I ∩ M₁.E ∪ I ∩ M₂.E
-  · apply union_inters_of_disjoint
-    exact hME
-    apply indepDirectSum_ground
-    sorry -- TODO in each branch separately
-  --rw [indepDirectSum_iff_of_disjoint hME sorry]
-  constructor <;> intro hyp -- <;> by_contra! contr
+  constructor <;> intro hyp
   · rw [indepDirectSum_iff_of_disjoint hME sorry] at hyp
     obtain ⟨⟨hM₁, hM₂⟩, hb⟩ := hyp
+    have I_as : I = I ∩ M₁.E ∪ I ∩ M₂.E
+    · apply Set.eq_union_inters_of_disjoint
+      apply indepDirectSum_ground
+      sorry
     constructor
     · constructor
       · exact hM₁
       · intro B₁ hB₁ hI₁
-        rw [this]
-        specialize hb ⟨B₁, I ∩ M₂.E, rfl, hB₁, hM₂⟩ (by rw [this]; setauto)
+        rw [I_as]
+        specialize hb ⟨B₁, I ∩ M₂.E, rfl, hB₁, hM₂⟩ (by rw [I_as]; setauto)
         rw [Set.union_inter_distrib_right, Set.inter_assoc, Set.inter_assoc, Set.inter_comm M₂.E,
             hME, Set.inter_empty, Set.union_empty, Set.inter_self]
-        have := M₁.subset_ground _ hB₁
-        setauto
+        exact Set.subset_inter_of_redundant_right hb (M₁.subset_ground _ hB₁)
     · constructor
       · exact hM₂
       · intro B₂ hB₂ hI₂
-        rw [this]
-        specialize hb ⟨I ∩ M₁.E, B₂, rfl, hM₁, hB₂⟩ (by rw [this]; setauto)
+        rw [I_as]
+        specialize hb ⟨I ∩ M₁.E, B₂, rfl, hM₁, hB₂⟩ (by rw [I_as]; setauto)
         rw [Set.union_inter_distrib_right, Set.inter_assoc, Set.inter_assoc,
             hME, Set.inter_empty, Set.empty_union, Set.inter_self]
-        have := M₂.subset_ground _ hB₂
-        setauto -- TODO refactor
-        intro x
-        specialize hI₂ x
-        specialize hb x
-        specialize this x
-        tauto
+        exact Set.subset_inter_of_redundant_left hb (M₂.subset_ground _ hB₂)
   -- = >
   -- by contradiction: assume one component is not maximal
   -- then we can expand it while preserving independence
@@ -141,10 +140,14 @@ lemma indepDirectSum_iff_disjoint_maximals {M₁ M₂ : IndepMatroid α} (hME : 
   -- <=
   -- by contradiction: suppose not maximal in union
   -- then we can expand it
-  -- extra element is in M1 or M2
+  -- extra element is in `M₁` or `M₂`
   -- drag it to components, contradicts maximality
   · rw [indepDirectSum_iff_of_disjoint hME (indepDirectSum_ground _)]
     obtain ⟨hyp₁, hyp₂⟩ := hyp
+    have I_as : I = I ∩ M₁.E ∪ I ∩ M₂.E
+    · apply Set.eq_union_inters_of_disjoint
+      apply indepDirectSum_ground
+      sorry
     constructor
     · tauto
     · intro B hB hIB
@@ -154,7 +157,7 @@ lemma indepDirectSum_iff_disjoint_maximals {M₁ M₂ : IndepMatroid α} (hME : 
       · sorry
       have hB₁ := hyp₁.right hM₁ (by setauto)
       have hB₂ := hyp₂.right hM₂ (by setauto)
-      rw [this] at *
+      rw [I_as] at *
       setauto
       intro x hx
       specialize hME x
@@ -163,26 +166,6 @@ lemma indepDirectSum_iff_disjoint_maximals {M₁ M₂ : IndepMatroid α} (hME : 
       specialize hIB x
       sorry
     · sorry
-
-
-lemma indepDirectSum_chain_to_components {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅)
-    {I T X : Set α} (hIT : I ⊆ T) (hTX : T ⊆ X) (hX : X ⊆ M₁.E ∪ M₂.E) :
-    (M₁.Indep (T ∩ M₁.E) ∧ (I ∩ M₁.E) ⊆ (T ∩ M₁.E) ∧ (T ∩ M₁.E) ⊆ (X ∩ M₁.E)) ∧
-    (M₂.Indep (T ∩ M₂.E) ∧ (I ∩ M₂.E) ⊆ (T ∩ M₂.E) ∧ (T ∩ M₂.E) ⊆ (X ∩ M₂.E)) := by
-  sorry  -- check the properties
-  -- constructor
-  -- · have huh : I₁ ∪ I₂ ⊆ M₁.E ∪ M₂.E
-  --   · sorry
-  --   rw [subset_iff_subsets_of_disjoint huh] at hII
-  --   sorry
-  -- constructor
-  -- · have : I₁ = I₁ ∩ M₁.E
-  --   · rw [Set.inter_comm]
-  --     sorry -- exact?
-  --   constructor
-  --   · sorry
-  --   · sorry
-  -- sorry
 
 def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) : IndepMatroid α :=
   IndepMatroid.mk
@@ -195,7 +178,7 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
         exact indepDirectSum_ground hMB
       rw [indepDirectSum_iff_of_disjoint hME hA]
       rw [indepDirectSum_iff_of_disjoint hME (indepDirectSum_ground hMB)] at hMB
-      rw [subset_iff_subsets_of_disjoint hA] at hAB
+      rw [Set.subset_iff_subsets_of_disjoint hA] at hAB
       obtain ⟨hE₁, hE₂⟩ := hAB
       obtain ⟨hB₁, hB₂⟩ := hMB
       exact ⟨M₁.indep_subset hB₁ hE₁, M₂.indep_subset hB₂ hE₂⟩
@@ -203,11 +186,11 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
     (by
       intro I B hI hInotmax hBmax
 
-      -- split B into B₁ = B ∩ M₁.E and B₂
+      -- split `B` into `B₁ = B ∩ M₁.E` and `B₂`
       rw [indepDirectSum_iff_disjoint_maximals hME] at hBmax
       obtain ⟨hB₁, hB₂⟩ := hBmax
 
-      -- split I into I₁ and I₂
+      -- split `I` into `I₁` and `I₂`
       rw [indepDirectSum_iff_disjoint_maximals hME, not_and_or] at hInotmax
 
       have hhI := hI
@@ -254,42 +237,46 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
       rw [indepDirectSum_iff_of_disjoint hME hIinground] at hI
       obtain ⟨hI₁, hI₂⟩ := hI
 
-      -- define S₁ and S₂
+      -- define `S₁` and `S₂`
       obtain ⟨S₁, hS₁⟩ := M₁.indep_maximal (X ∩ M₁.E) (Set.inter_subset_right X M₁.E) _ hI₁ (by
-        rw [subset_iff_subsets_of_disjoint hIinground] at hIX
+        rw [Set.subset_iff_subsets_of_disjoint hIinground] at hIX
         exact hIX.left
       )
       obtain ⟨S₂, hS₂⟩ := M₂.indep_maximal (X ∩ M₂.E) (Set.inter_subset_right X M₂.E) _ hI₂ (by
-        rw [subset_iff_subsets_of_disjoint hIinground] at hIX
+        rw [Set.subset_iff_subsets_of_disjoint hIinground] at hIX
         exact hIX.right
       )
       dsimp [maximals] at hS₁ hS₂
 
-      -- apply contr to S => there is a strictly bigger S' with the same properties
+      -- apply `contr` to `S` → there is a strictly bigger `S'` with the same properties
       by_contra! contr
       unfold maximals at contr
       rw [Set.eq_empty_iff_forall_not_mem] at contr
       specialize contr (S₁ ∪ S₂)
       simp at contr
       obtain ⟨T, hTS₂, hTS₁, hTX, hIT, hTindep, hTbig⟩ :=
-        contr sorry sorry sorry sorry  -- by hS₁, hS₂ and some set theory
+        contr sorry sorry sorry sorry  -- by `hS₁`, `hS₂`, and some set theory
 
-      -- we will derive a contradiction with hTbig
+      -- we will derive a contradiction with `hTbig`
       apply hTbig
 
-      -- split T into parts
-      obtain ⟨hT₁, hT₂⟩ := indepDirectSum_chain_to_components hME hIT hTX hX
+      have hTE₁ : M₁.Indep (T ∩ M₁.E)
+      · sorry
+      have hTE₂ : M₂.Indep (T ∩ M₂.E)
+      · sorry
+      -- split `T` into parts
+      obtain ⟨hT₁, hT₂⟩ := Set.chain_to_components hME hIT hTX hX
 
-      -- S₁ and S₂ contain parts of T by maximality
-      have hT₁S₁ := hS₁.right hT₁ (by  -- set theory
+      -- `S₁` and `S₂` contain parts of `T` by maximality
+      have hT₁S₁ := hS₁.right ⟨hTE₁, hT₁⟩ (by  -- set theory
         have hTS₁' : S₁ ∩ M₁.E ⊆ T ∩ M₁.E
         · apply Set.inter_subset_inter hTS₁
           rfl
         convert hTS₁'
-        -- follows from hTS₁ and hT₁₂ and hS₁.left.right.right
+        -- follows from `hTS₁`, `hT₁₂`, and `hS₁.left.right.right`
         sorry
       )
-      have hT₂S₂ := hS₂.right hT₂ (by -- set theory, similar to above
+      have hT₂S₂ := hS₂.right ⟨hTE₂, hT₂⟩ (by -- set theory, similar to above
         sorry
       )
 
