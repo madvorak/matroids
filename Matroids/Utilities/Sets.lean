@@ -19,12 +19,11 @@ lemma Set.subset_iff_subsets_of_disjoint {A B E₁ E₂ : Set α} (hA : A ⊆ E�
     A ⊆ B ↔ A ∩ E₁ ⊆ B ∩ E₁ ∧ A ∩ E₂ ⊆ B ∩ E₂ := by
   constructor
   · setauto
-  · intro ⟨hE₁, hE₂⟩ x
+  · intro ⟨hABE₁, hABE₂⟩ x hx
     setauto
-    specialize hA x
-    specialize hE₁ x
-    specialize hE₂ x
-    tauto
+    cases hA x hx with
+    | inl hE₁ => exact (hABE₁ x ⟨hx, hE₁⟩).left
+    | inr hE₁ => exact (hABE₂ x ⟨hx, hE₁⟩).left
 
 lemma Set.strict_subsets_of_disjoint {A B E₁ E₂ : Set α}
     (hA : A ⊆ E₁ ∪ E₂) (hB : B ⊆ E₁ ∪ E₂) (hE : E₁ ∩ E₂ = ∅) (hAB : A ⊂ B) :
@@ -47,8 +46,6 @@ lemma Set.strict_subsets_of_disjoint {A B E₁ E₂ : Set α}
   else
     tauto
 
-lemma Set.chain_to_components {E₁ E₂ I T X : Set α}
-     (hIT : I ⊆ T) (hTX : T ⊆ X) :
-    ((I ∩ E₁) ⊆ (T ∩ E₁) ∧ (T ∩ E₁) ⊆ (X ∩ E₁)) ∧
-    ((I ∩ E₂) ⊆ (T ∩ E₂) ∧ (T ∩ E₂) ⊆ (X ∩ E₂)) := by
-  setauto
+lemma Set.between_inter {I T X : Set α} (hIT : I ⊆ T) (hTX : T ⊆ X) (E : Set α) :
+    (I ∩ E) ⊆ (T ∩ E) ∧ (T ∩ E) ⊆ (X ∩ E) :=
+  ⟨Set.inter_subset_inter_left E hIT, Set.inter_subset_inter_left E hTX⟩

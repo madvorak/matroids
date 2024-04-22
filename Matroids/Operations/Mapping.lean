@@ -15,9 +15,16 @@ def indepMatroidMapping {α β : Type*} (M' : IndepMatroid α) (f : α → β) :
       sorry
     )
     (by
-      intro X hX I' ⟨I, hI, hfI⟩ hI'subset
-      unfold Set.Nonempty maximals
-      simp
+      intro X hX I' ⟨I, hI, hfI⟩ hI'
+      use f '' I
+      constructor
+      · constructor
+        · use I
+        rw [hfI]
+        exact ⟨subset_refl I', hI'⟩
+      simp [Set.Nonempty, maximals]
+      intro A hA hI'fA hAX hfA
+      rw [hfI]
       sorry
     )
     (fun I ⟨_, hI', hfI'⟩ => hfI' ▸ Set.image_subset f (M'.subset_ground _ hI'))
