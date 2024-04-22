@@ -1,3 +1,4 @@
+import Mathlib.Tactic.Have
 import Matroids.Utilities.Tactics
 
 variable {α : Type*}
@@ -49,3 +50,21 @@ lemma Set.strict_subsets_of_disjoint {A B E₁ E₂ : Set α}
 lemma Set.between_inter {I T X : Set α} (hIT : I ⊆ T) (hTX : T ⊆ X) (E : Set α) :
     (I ∩ E) ⊆ (T ∩ E) ∧ (T ∩ E) ⊆ (X ∩ E) :=
   ⟨Set.inter_subset_inter_left E hIT, Set.inter_subset_inter_left E hTX⟩
+
+lemma Set.union_inter_eq_fst {S₁ S₂ E₁ E₂ X₁ X₂ : Set α} (hE : E₁ ∩ E₂ = ∅) (hX₁ : S₁ ⊆ X₁ ∩ E₁) (hX₂ : S₂ ⊆ X₂ ∩ E₂) :
+    (S₁ ∪ S₂) ∩ E₁ = S₁ := by
+  rw [Set.union_inter_distrib_right]
+  rw [Set.subset_inter_iff] at hX₁ hX₂
+  convert Set.union_empty S₁
+  · symm
+    rw [Set.left_eq_inter]
+    exact hX₁.right
+  · rw [←Set.subset_empty_iff] at hE ⊢
+    apply (Set.inter_subset_inter_left E₁ hX₂.right).trans
+    rwa [Set.inter_comm] at hE
+
+lemma Set.union_inter_eq_snd {S₁ S₂ E₁ E₂ X₁ X₂ : Set α} (hE : E₁ ∩ E₂ = ∅) (hX₁ : S₁ ⊆ X₁ ∩ E₁) (hX₂ : S₂ ⊆ X₂ ∩ E₂) :
+    (S₁ ∪ S₂) ∩ E₂ = S₂ := by
+  rw [Set.union_comm]
+  rw [Set.inter_comm] at hE
+  exact Set.union_inter_eq_fst hE hX₂ hX₁

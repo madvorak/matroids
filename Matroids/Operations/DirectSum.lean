@@ -1,5 +1,4 @@
 import Mathlib.Data.Matroid.IndepAxioms
-import Mathlib.Tactic.Have
 import Matroids.Utilities.Sets
 
 
@@ -176,17 +175,17 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
     )
     (by
       intro X hX I hI hIX
-      have hIinground := indepDirectSum_ground hI
-      rw [indepDirectSum_iff_of_disjoint hME hIinground] at hI
+      have I_grounded := indepDirectSum_ground hI
+      rw [indepDirectSum_iff_of_disjoint hME I_grounded] at hI
       obtain ⟨hI₁, hI₂⟩ := hI
 
       -- define `S₁` and `S₂`
       obtain ⟨S₁, hS₁⟩ := M₁.indep_maximal (X ∩ M₁.E) (Set.inter_subset_right X M₁.E) _ hI₁ (by
-        rw [Set.subset_iff_subsets_of_disjoint hIinground] at hIX
+        rw [Set.subset_iff_subsets_of_disjoint I_grounded] at hIX
         exact hIX.left
       )
       obtain ⟨S₂, hS₂⟩ := M₂.indep_maximal (X ∩ M₂.E) (Set.inter_subset_right X M₂.E) _ hI₂ (by
-        rw [Set.subset_iff_subsets_of_disjoint hIinground] at hIX
+        rw [Set.subset_iff_subsets_of_disjoint I_grounded] at hIX
         exact hIX.right
       )
       dsimp [maximals] at hS₁ hS₂
@@ -198,7 +197,26 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
       specialize contr (S₁ ∪ S₂)
       simp at contr
       obtain ⟨T, hTS₂, hTS₁, hTX, hIT, hTindep, hTbig⟩ :=
-        contr sorry sorry sorry sorry  -- by `hS₁`, `hS₂`, and some set theory
+        contr
+          ⟨S₁, S₂, rfl, hS₁.left.left, hS₂.left.left⟩
+          (by
+            rw [Set.subset_iff_subsets_of_disjoint I_grounded]
+            constructor
+            · convert hS₁.left.right.left
+              exact Set.union_inter_eq_fst hME hS₁.left.right.right hS₂.left.right.right
+            · convert hS₂.left.right.left
+              exact Set.union_inter_eq_snd hME hS₁.left.right.right hS₂.left.right.right
+          )
+          (by
+            have := hS₁.left.right.right
+            rw [Set.subset_inter_iff] at this
+            exact this.left
+          )
+          (by
+            have := hS₂.left.right.right
+            rw [Set.subset_inter_iff] at this
+            exact this.left
+          )
 
       -- we will derive a contradiction with `hTbig`
       apply hTbig
