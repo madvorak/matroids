@@ -236,19 +236,17 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
           constructor
           · setesop
           rw [indepDirectSum_iff_of_disjoint]
-          sorry
-          sorry
-          sorry -- todo @Martin: fix code below
-          -- constructor
-          -- · convert hxAug using 1
-          --   setesop
-          -- convert hI.right using 1
-          -- · setesop
-          -- · exact hME
-          -- rw [Set.insert_subset_iff, Set.mem_union]
-          -- constructor
-          -- · setesop
-          -- · exact indepDirectSum_ground hhI
+          constructor
+          swap
+          · convert hxAug using 1
+            setesop
+          convert hI.left using 1
+          · setesop
+          · exact hME
+          rw [Set.insert_subset_iff, Set.mem_union]
+          constructor
+          · setesop
+          · exact indepDirectSum_ground hhI
     )
     (by
       intro X hX I hI hIX
