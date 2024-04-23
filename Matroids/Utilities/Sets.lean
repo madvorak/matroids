@@ -8,13 +8,13 @@ lemma Set.eq_union_inters_of_subset_union {A B C : Set α} (hA : A ⊆ B ∪ C) 
     A = A ∩ B ∪ A ∩ C := by
   aesop
 
-lemma Set.subset_inter_of_redundant_right {A B C D : Set α} (hAB : A ∪ D ⊆ B) (hBC : A ⊆ C) :
+lemma Set.subset_inter_of_redundant_right {A B C D : Set α} (hADB : A ∪ D ⊆ B) (hAC : A ⊆ C) :
     A ⊆ B ∩ C :=
-  Set.subset_inter ((Set.subset_union_left A D).trans hAB) hBC
+  Set.subset_inter ((Set.subset_union_left A D).trans hADB) hAC
 
-lemma Set.subset_inter_of_redundant_left {A B C D : Set α} (hAB : D ∪ A ⊆ B) (hBC : A ⊆ C) :
+lemma Set.subset_inter_of_redundant_left {A B C D : Set α} (hDAB : D ∪ A ⊆ B) (hAC : A ⊆ C) :
     A ⊆ B ∩ C :=
-  Set.subset_inter ((Set.subset_union_right D A).trans hAB) hBC
+  Set.subset_inter ((Set.subset_union_right D A).trans hDAB) hAC
 
 lemma Set.union_inter_supset_left_of_disjoint {I₁ I₂ E₁ E₂ : Set α} (hE : E₁ ∩ E₂ = ∅) (hI : I₂ ⊆ E₂) :
     (I₁ ∪ I₂) ∩ E₁ = E₁ ∩ I₁ := by

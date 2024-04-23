@@ -1,10 +1,11 @@
-import Mathlib.Data.Matroid.IndepAxioms
+import Mathlib.Data.Matroid.Restrict
 import Matroids.Utilities.Sets
 
 
 variable {α : Type*}
 
 set_option linter.unusedVariables false in
+/-- Direct sum of matroids as a set operation. -/
 def indepDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) (I : Set α) : Prop :=
   ∃ I₁ I₂ : Set α, I₁ ∪ I₂ = I ∧ M₁.Indep I₁ ∧ M₂.Indep I₂
 /-
@@ -92,6 +93,7 @@ lemma indepDirectSum_maximals_iff {M₁ M₂ : IndepMatroid α} (hME : M₁.E �
       · exact hB₁ hB.leftIndep (Set.inter_subset_inter_left M₁.E hIB)
       · exact hB₂ hB.rightIndep (Set.inter_subset_inter_left M₂.E hIB)
 
+/-- Direct sum of matroids as a matroid defined by the independence axioms. -/
 def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) : IndepMatroid α :=
   IndepMatroid.mk
     (M₁.E ∪ M₂.E)
@@ -202,5 +204,10 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
       exact hTX.trans hX
     )
     (fun _ => (·.ground))
+
+/-- Direct sum of matroids as a matroid defined by bases. -/
+def matroidDirectSum {M₁ M₂ : Matroid α} (hME : M₁.E ∩ M₂.E = ∅) : Matroid α :=
+  (indepMatroidDirectSum hME').matroid where
+  hME' : (M₁.restrictIndepMatroid _).E ∩ (M₂.restrictIndepMatroid _).E = ∅ := hME
 
 #print axioms indepMatroidDirectSum
