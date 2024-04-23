@@ -4,7 +4,7 @@ import Matroids.Utilities.Sets
 
 variable {α : Type*}
 
---@[nolint unusedVariable] -- TODO how is it spelled?
+--@[nolint unusedVariables] -- TODO why doesn't it work?
 def indepDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) (I : Set α) : Prop :=
   ∃ I₁ I₂ : Set α, I₁ ∪ I₂ = I ∧ M₁.Indep I₁ ∧ M₂.Indep I₂
 /-
@@ -49,21 +49,18 @@ lemma indepDirectSum_iff_of_disjoint {M₁ M₂ : IndepMatroid α}
   ⟨fun hid => ⟨hid.leftIndep, hid.rightIndep⟩, fun ⟨hM₁, hM₂⟩ => ⟨I ∩ M₁.E, I ∩ M₂.E, by aesop⟩⟩
 
 lemma indepDirectSum_iff_disjoint_maximals {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) (I : Set α) :
-    I ∈ maximals (· ⊆ ·) {I | indepDirectSum hME I} ↔ -- TODO does spelling `Set.Subset` break it?
-    I ∩ M₁.E ∈ maximals (· ⊆ ·) M₁.Indep ∧ I ∩ M₂.E ∈ maximals (· ⊆ ·) M₂.Indep := by
+    I ∈ maximals (· ⊆ ·) {I | indepDirectSum hME I} ↔ -- TODO why does spelling `Set.Subset` break it?
+    I ⊆ M₁.E ∪ M₂.E ∧ I ∩ M₁.E ∈ maximals (· ⊆ ·) M₁.Indep ∧ I ∩ M₂.E ∈ maximals (· ⊆ ·) M₂.Indep := by
   dsimp only [maximals, Set.mem_setOf_eq]
   constructor <;> intro hyp
-  -- →
-  -- by contradiction: assume one component is not maximal
-  -- then we can expand it while preserving independence
-  -- drag it to disjoint union, contradicts maximality
-  -- repeat for both components
-  · rw [indepDirectSum_iff_of_disjoint hME sorry] at hyp
+  · have I_grounded : I ⊆ M₁.E ∪ M₂.E
+    · exact hyp.left.ground
+    rw [indepDirectSum_iff_of_disjoint hME I_grounded] at hyp
     obtain ⟨⟨hM₁, hM₂⟩, hB⟩ := hyp
     have I_as : I = I ∩ M₁.E ∪ I ∩ M₂.E
-    · apply Set.eq_union_inters_of_disjoint
-      -- applying `indepDirectSum.ground` would lead to circular reasoning
-      sorry
+    · exact Set.eq_union_inters_of_disjoint I_grounded
+    constructor
+    · exact I_grounded
     constructor
     · constructor
       · exact hM₁
@@ -81,30 +78,19 @@ lemma indepDirectSum_iff_disjoint_maximals {M₁ M₂ : IndepMatroid α} (hME : 
         rw [Set.union_inter_distrib_right, Set.inter_assoc, Set.inter_assoc,
             hME, Set.inter_empty, Set.empty_union, Set.inter_self]
         exact Set.subset_inter_of_redundant_left hB (M₂.subset_ground _ hB₂)
-  -- ←
-  -- by contradiction: suppose not maximal in union
-  -- then we can expand it
-  -- extra element is in `M₁` or `M₂`
-  -- drag it to components, contradicts maximality
-  · rw [indepDirectSum_iff_of_disjoint hME (indepDirectSum.ground _)]
-    obtain ⟨hyp₁, hyp₂⟩ := hyp
+  · obtain ⟨I_grounded, ⟨hI₁, hB₁⟩, ⟨hI₂, hB₂⟩⟩ := hyp
     have I_as : I = I ∩ M₁.E ∪ I ∩ M₂.E
-    · apply Set.eq_union_inters_of_disjoint
-      --refine indepDirectSum.ground ?_ hME
-      sorry
+    · exact Set.eq_union_inters_of_disjoint I_grounded
+    have I_indep : indepDirectSum hME I
+    · exact ⟨_, _, I_as.symm, hI₁, hI₂⟩
+    rw [indepDirectSum_iff_of_disjoint hME (indepDirectSum.ground I_indep)]
     constructor
-    · tauto
+    · exact ⟨hI₁, hI₂⟩
     · intro B hB hIB
-      have hM₁ : M₁.Indep (B ∩ M₁.E)
-      · sorry
-      have hM₂ : M₂.Indep (B ∩ M₂.E)
-      · sorry
-      have hB₁ := hyp₁.right hM₁ (by setauto)
-      have hB₂ := hyp₂.right hM₂ (by setauto)
-      rw [I_as] at *
-      sorry
-    · exact hME
-    · sorry
+      rw [Set.subset_iff_subsets_of_disjoint hB.ground]
+      constructor
+      · exact hB₁ hB.leftIndep (Set.inter_subset_inter_left M₁.E hIB)
+      · exact hB₂ hB.rightIndep (Set.inter_subset_inter_left M₂.E hIB)
 
 def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) : IndepMatroid α :=
   IndepMatroid.mk
@@ -126,13 +112,13 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
 
       -- split `B` into `B₁ = B ∩ M₁.E` and `B₂ = B ∩ M₂.E`
       rw [indepDirectSum_iff_disjoint_maximals hME] at B_max
-      obtain ⟨hB₁, hB₂⟩ := B_max
+      obtain ⟨- , hB₁, hB₂⟩ := B_max
 
       -- split `I` into `I₁` and `I₂`
-      rw [indepDirectSum_iff_disjoint_maximals hME, not_and_or] at I_not_max
-
       have I_grounded := hI.ground
+      rw [indepDirectSum_iff_disjoint_maximals hME] at I_not_max
       rw [indepDirectSum_iff_of_disjoint hME hI.ground] at hI
+      simp only [I_grounded, not_true_eq_false, false_or, not_and_or] at I_not_max
 
       cases I_not_max with
       | inl hI₁ =>
@@ -179,7 +165,7 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
           exact hIX.right
         )
 
-      -- apply `contr` to `S` → there is a strictly bigger set ;T; with the same properties
+      -- apply `contr` to `S` → there is a strictly bigger set `T` with the same properties
       by_contra! contr
       unfold maximals at contr
       rw [Set.eq_empty_iff_forall_not_mem] at contr
@@ -216,3 +202,5 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
       exact hTX.trans hX
     )
     (fun _ => (·.ground))
+
+#print axioms indepMatroidDirectSum
