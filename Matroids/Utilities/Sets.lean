@@ -4,7 +4,7 @@ import Matroids.Utilities.Tactics
 
 variable {α : Type*}
 
-lemma Set.eq_union_inters_of_disjoint {A B C : Set α} (hA : A ⊆ B ∪ C) :
+lemma Set.eq_union_inters_of_subset_union {A B C : Set α} (hA : A ⊆ B ∪ C) :
     A = A ∩ B ∪ A ∩ C := by
   aesop
 
@@ -37,10 +37,10 @@ lemma Set.subset_iff_subsets_of_disjoint {A B E₁ E₂ : Set α} (hA : A ⊆ E�
     setauto
     cases hA x hx with
     | inl hE₁ => exact (hABE₁ x ⟨hx, hE₁⟩).left
-    | inr hE₁ => exact (hABE₂ x ⟨hx, hE₁⟩).left
-
+    | inr hE₂ => exact (hABE₂ x ⟨hx, hE₂⟩).left
+-- the strict version seems to be unused
 lemma Set.strict_subsets_of_disjoint {A B E₁ E₂ : Set α}
-    (hA : A ⊆ E₁ ∪ E₂) (hB : B ⊆ E₁ ∪ E₂) (hE : E₁ ∩ E₂ = ∅) (hAB : A ⊂ B) :
+    (hB : B ⊆ E₁ ∪ E₂) (hE : E₁ ∩ E₂ = ∅) (hAB : A ⊂ B) :
     A ∩ E₁ ⊂ B ∩ E₁ ∨ A ∩ E₂ ⊂ B ∩ E₂ := by
   obtain ⟨_, hBA⟩ := hAB
   rw [Set.not_subset] at hBA

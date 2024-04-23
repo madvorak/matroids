@@ -4,7 +4,7 @@ import Matroids.Utilities.Sets
 
 variable {α : Type*}
 
---@[nolint unusedVariables] -- TODO why doesn't it work?
+set_option linter.unusedVariables false in
 def indepDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) (I : Set α) : Prop :=
   ∃ I₁ I₂ : Set α, I₁ ∪ I₂ = I ∧ M₁.Indep I₁ ∧ M₂.Indep I₂
 /-
@@ -43,22 +43,22 @@ lemma indepDirectSum.rightIndep {M₁ M₂ : IndepMatroid α} {hME : M₁.E ∩ 
   convert M₂.indep_subset hI₂ (Set.inter_subset_right M₂.E I₂) using 1
   exact Set.union_inter_supset_right_of_disjoint hME (M₁.subset_ground I₁ hI₁)
 
-lemma indepDirectSum_iff_of_disjoint {M₁ M₂ : IndepMatroid α}
+lemma indepDirectSum_iff {M₁ M₂ : IndepMatroid α}
     (hME : M₁.E ∩ M₂.E = ∅) {I : Set α} (hI : I ⊆ M₁.E ∪ M₂.E) :
     indepDirectSum hME I ↔ M₁.Indep (I ∩ M₁.E) ∧ M₂.Indep (I ∩ M₂.E) :=
   ⟨fun hid => ⟨hid.leftIndep, hid.rightIndep⟩, fun ⟨hM₁, hM₂⟩ => ⟨I ∩ M₁.E, I ∩ M₂.E, by aesop⟩⟩
 
-lemma indepDirectSum_iff_disjoint_maximals {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) (I : Set α) :
+lemma indepDirectSum_maximals_iff {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E = ∅) (I : Set α) :
     I ∈ maximals (· ⊆ ·) {I | indepDirectSum hME I} ↔ -- TODO why does spelling `Set.Subset` break it?
     I ⊆ M₁.E ∪ M₂.E ∧ I ∩ M₁.E ∈ maximals (· ⊆ ·) M₁.Indep ∧ I ∩ M₂.E ∈ maximals (· ⊆ ·) M₂.Indep := by
   dsimp only [maximals, Set.mem_setOf_eq]
   constructor <;> intro hyp
   · have I_grounded : I ⊆ M₁.E ∪ M₂.E
     · exact hyp.left.ground
-    rw [indepDirectSum_iff_of_disjoint hME I_grounded] at hyp
+    rw [indepDirectSum_iff hME I_grounded] at hyp
     obtain ⟨⟨hM₁, hM₂⟩, hB⟩ := hyp
     have I_as : I = I ∩ M₁.E ∪ I ∩ M₂.E
-    · exact Set.eq_union_inters_of_disjoint I_grounded
+    · exact Set.eq_union_inters_of_subset_union I_grounded
     constructor
     · exact I_grounded
     constructor
@@ -80,10 +80,10 @@ lemma indepDirectSum_iff_disjoint_maximals {M₁ M₂ : IndepMatroid α} (hME : 
         exact Set.subset_inter_of_redundant_left hB (M₂.subset_ground _ hB₂)
   · obtain ⟨I_grounded, ⟨hI₁, hB₁⟩, ⟨hI₂, hB₂⟩⟩ := hyp
     have I_as : I = I ∩ M₁.E ∪ I ∩ M₂.E
-    · exact Set.eq_union_inters_of_disjoint I_grounded
+    · exact Set.eq_union_inters_of_subset_union I_grounded
     have I_indep : indepDirectSum hME I
     · exact ⟨_, _, I_as.symm, hI₁, hI₂⟩
-    rw [indepDirectSum_iff_of_disjoint hME (indepDirectSum.ground I_indep)]
+    rw [indepDirectSum_iff hME I_indep.ground]
     constructor
     · exact ⟨hI₁, hI₂⟩
     · intro B hB hIB
@@ -100,8 +100,8 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
     (fun A B hMB hAB => by
       have hA : A ⊆ M₁.E ∪ M₂.E
       · exact hAB.trans hMB.ground
-      rw [indepDirectSum_iff_of_disjoint hME hA]
-      rw [indepDirectSum_iff_of_disjoint hME hMB.ground] at hMB
+      rw [indepDirectSum_iff hME hA]
+      rw [indepDirectSum_iff hME hMB.ground] at hMB
       rw [Set.subset_iff_subsets_of_disjoint hA] at hAB
       obtain ⟨hE₁, hE₂⟩ := hAB
       obtain ⟨hB₁, hB₂⟩ := hMB
@@ -111,13 +111,13 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
       intro I B hI I_not_max B_max
 
       -- split `B` into `B₁ = B ∩ M₁.E` and `B₂ = B ∩ M₂.E`
-      rw [indepDirectSum_iff_disjoint_maximals hME] at B_max
+      rw [indepDirectSum_maximals_iff hME] at B_max
       obtain ⟨- , hB₁, hB₂⟩ := B_max
 
       -- split `I` into `I₁` and `I₂`
       have I_grounded := hI.ground
-      rw [indepDirectSum_iff_disjoint_maximals hME] at I_not_max
-      rw [indepDirectSum_iff_of_disjoint hME hI.ground] at hI
+      rw [indepDirectSum_maximals_iff hME] at I_not_max
+      rw [indepDirectSum_iff hME hI.ground] at hI
       simp only [I_grounded, not_true_eq_false, false_or, not_and_or] at I_not_max
 
       cases I_not_max with
@@ -126,7 +126,7 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
         use x
         constructor
         · setesop
-        rw [indepDirectSum_iff_of_disjoint]
+        rw [indepDirectSum_iff]
         constructor
         · convert M₁_aug using 1
           setesop
@@ -138,7 +138,7 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
         use x
         constructor
         · setesop
-        rw [indepDirectSum_iff_of_disjoint]
+        rw [indepDirectSum_iff]
         constructor
         swap
         · convert M₂_aug using 1
@@ -150,7 +150,7 @@ def indepMatroidDirectSum {M₁ M₂ : IndepMatroid α} (hME : M₁.E ∩ M₂.E
     (by
       intro X hX I hI hIX
       have I_grounded := hI.ground
-      rw [indepDirectSum_iff_of_disjoint hME I_grounded] at hI
+      rw [indepDirectSum_iff hME I_grounded] at hI
       obtain ⟨hI₁, hI₂⟩ := hI
 
       -- define `S₁` and `S₂`
