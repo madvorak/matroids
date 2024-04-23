@@ -6,7 +6,7 @@ This repository contains formalizations of certain classes of matroids and their
 ## Features and Roadmap
 
 - [ ] Operations on matroids
-    - [ ] Direct sum
+    - [x] Direct sum
     - [ ] Mapping
     - [ ] Union
 - [ ] Representable matroids
