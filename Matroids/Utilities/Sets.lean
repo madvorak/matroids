@@ -16,6 +16,19 @@ lemma Set.subset_inter_of_redundant_left {A B C D : Set α} (hAB : D ∪ A ⊆ B
     A ⊆ B ∩ C :=
   Set.subset_inter ((Set.subset_union_right D A).trans hAB) hBC
 
+lemma Set.union_inter_supset_left_of_disjoint {I₁ I₂ E₁ E₂ : Set α} (hE : E₁ ∩ E₂ = ∅) (hI : I₂ ⊆ E₂) :
+    (I₁ ∪ I₂) ∩ E₁ = E₁ ∩ I₁ := by
+  rw [Set.union_inter_distrib_right]
+  conv => rhs; rw [Set.inter_comm]
+  convert Set.union_empty _
+  setesop
+
+lemma Set.union_inter_supset_right_of_disjoint {I₁ I₂ E₁ E₂ : Set α} (hE : E₁ ∩ E₂ = ∅) (hI : I₁ ⊆ E₁) :
+    (I₁ ∪ I₂) ∩ E₂ = E₂ ∩ I₂ := by
+  rw [Set.union_comm]
+  rw [Set.inter_comm] at hE
+  exact Set.union_inter_supset_left_of_disjoint hE hI
+
 lemma Set.subset_iff_subsets_of_disjoint {A B E₁ E₂ : Set α} (hA : A ⊆ E₁ ∪ E₂) :
     A ⊆ B ↔ A ∩ E₁ ⊆ B ∩ E₁ ∧ A ∩ E₂ ⊆ B ∩ E₂ := by
   constructor
