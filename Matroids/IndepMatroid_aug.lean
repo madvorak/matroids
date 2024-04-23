@@ -1,10 +1,9 @@
-import Mathlib.Data.Matroid.Basic
 import Mathlib.Data.Matroid.IndepAxioms
 
+variable {α : Type*}
 
-def IndepMatroid.Finite {α : Type} (M : IndepMatroid α) : Prop :=
+def IndepMatroid.Finite (M : IndepMatroid α) : Prop :=
   M.matroid.Finite
 
-
-def IndepMatroid.ExistsMaximalSubsetProperty {α : Type _} (P : Set α → Prop) (X : Set α) : Prop :=
+def IndepMatroid.ExistsMaximalSubsetProperty (P : Set α → Prop) (X : Set α) : Prop :=
   Matroid.ExistsMaximalSubsetProperty P X
